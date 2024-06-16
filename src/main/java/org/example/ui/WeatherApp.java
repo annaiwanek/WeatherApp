@@ -4,10 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.example.service.WeatherService;
 import org.example.model.WeatherData;
 
 public class WeatherApp extends JFrame {
+    private static Logger logger = LogManager.getLogger(WeatherApp.class);
     private JTextField locationField;
     private JLabel locationLabel;
     private JLabel temperatureLabel;
@@ -15,6 +19,7 @@ public class WeatherApp extends JFrame {
     private JLabel iconLabel;
 
     public WeatherApp() {
+        logger.info("Starting Weather app...");
         setTitle("Weather App");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
