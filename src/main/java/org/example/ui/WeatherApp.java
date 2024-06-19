@@ -14,6 +14,17 @@ import org.example.service.OpenWeatherMapService;
 import org.example.service.WeatherProvider;
 import org.example.model.WeatherData;
 import org.example.db.WeatherDataDAO;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.title.TextTitle;
 
 public class WeatherApp extends JFrame {
     private static Logger logger = LogManager.getLogger(WeatherApp.class);
@@ -24,11 +35,12 @@ public class WeatherApp extends JFrame {
     private JLabel iconLabel;
     private WeatherDataDAO weatherDataDAO;
     private Image backgroundImage;
+    private ChartPanel chartPanel;
 
     public WeatherApp() {
         logger.info("Starting Weather app...");
         setTitle("Weather App");
-        setSize(600, 400); // Zwiększenie rozmiaru okna
+        setSize(800, 600); // Zwiększenie rozmiaru okna
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -111,13 +123,16 @@ public class WeatherApp extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 List<WeatherData> weatherDataList = weatherDataDAO.getAllWeatherData();
-                WeatherChart chart = new WeatherChart("Wykres Pogodowy", weatherDataList);
-                chart.pack();
-                chart.setVisible(true);
+                updateChart(weatherDataList);
             }
         });
 
-        add(panel, BorderLayout.CENTER);
+        add(panel, BorderLayout.NORTH);
+
+        // Initialize the chart panel
+        chartPanel = new ChartPanel(null);
+        chartPanel.setPreferredSize(new Dimension(800, 400));
+        add(chartPanel, BorderLayout.CENTER);
     }
 
     private void fetchWeather(String location) {
@@ -127,6 +142,7 @@ public class WeatherApp extends JFrame {
                 WeatherData currentWeather = weatherProvider.getCurrentWeather(location);
                 List<WeatherData> hourlyWeather = weatherProvider.getWeather(location);
 
+                weatherDataDAO.clearWeatherData(); // Clear existing data
                 weatherDataDAO.saveWeatherData(currentWeather);
                 for (WeatherData weatherData : hourlyWeather) {
                     weatherDataDAO.saveWeatherData(weatherData);
@@ -150,6 +166,66 @@ public class WeatherApp extends JFrame {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateChart(List<WeatherData> weatherDataList) {
+        XYSeriesCollection dataset = createDataset(weatherDataList);
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "Dane pogodowe",
+                "Czas",
+                "Wartość",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false);
+
+        chart.setBackgroundPaint(Color.white);
+
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.lightGray);
+        plot.setDomainGridlinePaint(Color.white);
+        plot.setRangeGridlinePaint(Color.white);
+
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        renderer.setSeriesPaint(0, Color.RED); // Temperature
+        renderer.setSeriesPaint(1, Color.BLUE); // Wind Speed
+        renderer.setSeriesPaint(2, Color.GREEN); // Humidity
+        renderer.setSeriesPaint(3, Color.YELLOW); // Pressure
+        plot.setRenderer(renderer);
+
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+        ValueAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setVerticalTickLabels(true);
+
+        chartPanel.setChart(chart);
+    }
+
+    private XYSeriesCollection createDataset(List<WeatherData> weatherDataList) {
+        XYSeries temperatureSeries = new XYSeries("Temperatura");
+        XYSeries windSpeedSeries = new XYSeries("Prędkość wiatru");
+        XYSeries humiditySeries = new XYSeries("Wilgotność");
+        XYSeries pressureSeries = new XYSeries("Ciśnienie");
+
+        int index = 0;
+        for (WeatherData data : weatherDataList) {
+            if (data.getTimestamp() != null) {
+                temperatureSeries.add(index, data.getTemperature());
+                windSpeedSeries.add(index, data.getWindSpeed());
+                humiditySeries.add(index, data.getHumidity());
+                pressureSeries.add(index, data.getPressure());
+                index++;
+            }
+        }
+
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(temperatureSeries);
+        dataset.addSeries(windSpeedSeries);
+        dataset.addSeries(humiditySeries);
+        dataset.addSeries(pressureSeries);
+
+        return dataset;
     }
 
     private void showError(String message) {

@@ -1,6 +1,7 @@
 package org.example.db;
 
 import org.example.model.WeatherData;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,19 +19,11 @@ public class WeatherDataDAO {
                     + "description TEXT NOT NULL, "
                     + "icon TEXT NOT NULL, "
                     + "windSpeed REAL, "
-                    + "humidity REAL NOT NULL, "
-                    + "pressure REAL NOT NULL, "
-                    + "timestamp TEXT)"; // Dodano pole timestamp
+                    + "humidity REAL, "
+                    + "pressure REAL, "
+                    + "timestamp TEXT NOT NULL)";
             Statement stmt = conn.createStatement();
             stmt.execute(createTableSQL);
-
-            // Dodanie kolumny timestamp, jeśli jej nie ma
-            DatabaseMetaData dbm = conn.getMetaData();
-            ResultSet rs = dbm.getColumns(null, null, "weather", "timestamp");
-            if (!rs.next()) { // kolumna nie istnieje, więc ją dodajemy
-                String addColumnSQL = "ALTER TABLE weather ADD COLUMN timestamp TEXT";
-                stmt.execute(addColumnSQL);
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -47,7 +40,7 @@ public class WeatherDataDAO {
             pstmt.setDouble(5, data.getWindSpeed());
             pstmt.setDouble(6, data.getHumidity());
             pstmt.setDouble(7, data.getPressure());
-            pstmt.setString(8, data.getTimestamp()); // Dodano pole timestamp
+            pstmt.setString(8, data.getTimestamp());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -68,9 +61,8 @@ public class WeatherDataDAO {
                 double windSpeed = rs.getDouble("windSpeed");
                 double humidity = rs.getDouble("humidity");
                 double pressure = rs.getDouble("pressure");
-                String timestamp = rs.getString("timestamp"); // Dodano pole timestamp
-                WeatherData data = new WeatherData(location, temperature, description, icon, windSpeed, humidity, pressure, timestamp);
-                weatherDataList.add(data);
+                String timestamp = rs.getString("timestamp");
+                weatherDataList.add(new WeatherData(location, temperature, description, icon, windSpeed, humidity, pressure, timestamp));
             }
         } catch (SQLException e) {
             e.printStackTrace();
