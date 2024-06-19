@@ -3,8 +3,8 @@ package org.example.ui;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.chart.plot.PlotOrientation; // Dodaj ten import
 import org.example.model.WeatherData;
 
 import javax.swing.*;
@@ -12,28 +12,27 @@ import java.awt.*;
 import java.util.List;
 
 public class WeatherChart extends JFrame {
-
     public WeatherChart(String title, List<WeatherData> weatherDataList) {
         super(title);
 
-        // Create dataset
+        // Utwórz dataset
         DefaultCategoryDataset dataset = createDataset(weatherDataList);
 
-        // Create chart
+        // Utwórz wykres
         JFreeChart chart = ChartFactory.createLineChart(
-                "Temperature Over Time",
-                "Date",
-                "Temperature",
+                "Dane pogodowe",
+                "Czas",
+                "Wartość",
                 dataset,
                 PlotOrientation.VERTICAL,
                 true, true, false);
 
-        // Customize the chart
+        // Dostosuj wykres
         chart.setBackgroundPaint(Color.white);
 
-        // Add the chart to a panel
+        // Dodaj wykres do panelu
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(800, 400));
+        chartPanel.setPreferredSize(new Dimension(800, 600));
         setContentPane(chartPanel);
     }
 
@@ -41,7 +40,10 @@ public class WeatherChart extends JFrame {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         for (WeatherData data : weatherDataList) {
-            dataset.addValue(data.getTemperature(), "Temperature", data.getLocation());
+            dataset.addValue(data.getTemperature(), "Temperatura", data.getLocation());
+            dataset.addValue(data.getWindSpeed(), "Prędkość wiatru", data.getLocation());
+            dataset.addValue(data.getHumidity(), "Wilgotność", data.getLocation()); // Dodano pole humidity
+            dataset.addValue(data.getPressure(), "Ciśnienie", data.getLocation()); // Dodano pole pressure
         }
 
         return dataset;

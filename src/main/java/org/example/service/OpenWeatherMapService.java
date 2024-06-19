@@ -49,9 +49,12 @@ public class OpenWeatherMapService implements WeatherProvider {
             double temperature = obj.getJSONObject("main").getDouble("temp");
             String description = obj.getJSONArray("weather").getJSONObject(0).getString("description");
             String icon = obj.getJSONArray("weather").getJSONObject(0).getString("icon");
+            double windSpeed = obj.getJSONObject("wind").getDouble("speed");
+            double humidity = obj.getJSONObject("main").getDouble("humidity"); // Dodano pole humidity
+            double pressure = obj.getJSONObject("main").getDouble("pressure"); // Dodano pole pressure
 
             logger.info("Parsed weather data for location: {}", location);
-            return new WeatherData(location, temperature, description, icon);
+            return new WeatherData(location, temperature, description, icon, windSpeed, humidity, pressure);
         } catch (Exception e) {
             logger.error("Error while parsing weather data: {}", e.getMessage());
             throw new Exception("Error while parsing weather data", e);
