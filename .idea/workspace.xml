@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="">
+    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="Ulepszona wersja interfejsu, dodanie ikon, wykres podstawowy">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/db/WeatherDataDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/db/WeatherDataDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/WeatherData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/WeatherData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/OpenWeatherMapService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/OpenWeatherMapService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/WeatherProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/WeatherProvider.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherChart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherChart.java" afterDir="false" />
     </list>
@@ -62,6 +63,19 @@
       <option name="presentableId" value="Default" />
       <updated>1718535410007</updated>
     </task>
+    <task id="LOCAL-00001" summary="Ulepszona wersja interfejsu, dodanie ikon, wykres podstawowy">
+      <option name="closed" value="true" />
+      <created>1718805284690</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1718805284690</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Ulepszona wersja interfejsu, dodanie ikon, wykres podstawowy" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ulepszona wersja interfejsu, dodanie ikon, wykres podstawowy" />
   </component>
 </project>

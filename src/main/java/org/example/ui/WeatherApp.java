@@ -124,9 +124,15 @@ public class WeatherApp extends JFrame {
         new Thread(() -> {
             try {
                 WeatherProvider weatherProvider = new OpenWeatherMapService();
-                WeatherData data = weatherProvider.getWeather(location);
-                weatherDataDAO.saveWeatherData(data);
-                SwingUtilities.invokeLater(() -> updateUI(data));
+                WeatherData currentWeather = weatherProvider.getCurrentWeather(location);
+                List<WeatherData> hourlyWeather = weatherProvider.getWeather(location);
+
+                weatherDataDAO.saveWeatherData(currentWeather);
+                for (WeatherData weatherData : hourlyWeather) {
+                    weatherDataDAO.saveWeatherData(weatherData);
+                }
+
+                SwingUtilities.invokeLater(() -> updateUI(currentWeather));
             } catch (Exception e) {
                 SwingUtilities.invokeLater(() -> showError(e.getMessage()));
             }

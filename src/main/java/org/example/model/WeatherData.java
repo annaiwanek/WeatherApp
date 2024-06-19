@@ -6,17 +6,19 @@ public class WeatherData {
     private String description;
     private String icon;
     private double windSpeed;
-    private double humidity; // Dodano pole humidity
-    private double pressure; // Dodano pole pressure
+    private double humidity;
+    private double pressure;
+    private String timestamp; // Może być null dla bieżących danych
 
-    public WeatherData(String location, double temperature, String description, String icon, double windSpeed, double humidity, double pressure) {
+    public WeatherData(String location, double temperature, String description, String icon, double windSpeed, double humidity, double pressure, String timestamp) {
         this.location = location;
         this.temperature = temperature;
         this.description = description;
         this.icon = icon;
         this.windSpeed = windSpeed;
-        this.humidity = humidity; // Dodano pole humidity
-        this.pressure = pressure; // Dodano pole pressure
+        this.humidity = humidity;
+        this.pressure = pressure;
+        this.timestamp = timestamp; // Może być null
     }
 
     // Gettery
@@ -25,6 +27,7 @@ public class WeatherData {
     public String getDescription() { return description; }
     public String getIcon() { return icon; }
     public double getWindSpeed() { return windSpeed; }
-    public double getHumidity() { return humidity; } // Dodano getter
-    public double getPressure() { return pressure; } // Dodano getter
+    public double getHumidity() { return humidity; }
+    public double getPressure() { return pressure; }
+    public String getTimestamp() { return timestamp; }
 }

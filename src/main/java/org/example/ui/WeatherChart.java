@@ -3,8 +3,8 @@ package org.example.ui;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.chart.plot.PlotOrientation; // Dodaj ten import
 import org.example.model.WeatherData;
 
 import javax.swing.*;
@@ -12,13 +12,14 @@ import java.awt.*;
 import java.util.List;
 
 public class WeatherChart extends JFrame {
+
     public WeatherChart(String title, List<WeatherData> weatherDataList) {
         super(title);
 
-        // Utwórz dataset
+        // Create dataset
         DefaultCategoryDataset dataset = createDataset(weatherDataList);
 
-        // Utwórz wykres
+        // Create chart
         JFreeChart chart = ChartFactory.createLineChart(
                 "Dane pogodowe",
                 "Czas",
@@ -27,12 +28,12 @@ public class WeatherChart extends JFrame {
                 PlotOrientation.VERTICAL,
                 true, true, false);
 
-        // Dostosuj wykres
+        // Customize the chart
         chart.setBackgroundPaint(Color.white);
 
-        // Dodaj wykres do panelu
+        // Add the chart to a panel
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(800, 600));
+        chartPanel.setPreferredSize(new Dimension(800, 400));
         setContentPane(chartPanel);
     }
 
@@ -40,10 +41,12 @@ public class WeatherChart extends JFrame {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         for (WeatherData data : weatherDataList) {
-            dataset.addValue(data.getTemperature(), "Temperatura", data.getLocation());
-            dataset.addValue(data.getWindSpeed(), "Prędkość wiatru", data.getLocation());
-            dataset.addValue(data.getHumidity(), "Wilgotność", data.getLocation()); // Dodano pole humidity
-            dataset.addValue(data.getPressure(), "Ciśnienie", data.getLocation()); // Dodano pole pressure
+            if (data.getTimestamp() != null) {
+                dataset.addValue(data.getTemperature(), "Temperatura", data.getTimestamp());
+                dataset.addValue(data.getWindSpeed(), "Prędkość wiatru", data.getTimestamp());
+                dataset.addValue(data.getHumidity(), "Wilgotność", data.getTimestamp());
+                dataset.addValue(data.getPressure(), "Ciśnienie", data.getTimestamp());
+            }
         }
 
         return dataset;
