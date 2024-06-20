@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="Naprawiono błędy związane z bazą danych">
+    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="Dodano nową tabelkę z informacjami pogodowymu">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/OpenWeatherMapService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/OpenWeatherMapService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/WeatherServiceTest.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,13 +84,22 @@
       <option name="project" value="LOCAL" />
       <updated>1718868906387</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Dodano nową tabelkę z informacjami pogodowymu">
+      <option name="closed" value="true" />
+      <created>1718873402709</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1718873402709</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Ulepszona wersja interfejsu, dodanie ikon, wykres podstawowy" />
     <MESSAGE value="Ulepszona wersja interfejsu, dodanie ikon, wykres czasowy rejestrujacy zmiany pogodny - działający" />
     <MESSAGE value="Naprawiono błędy związane z bazą danych" />
-    <option name="LAST_COMMIT_MESSAGE" value="Naprawiono błędy związane z bazą danych" />
+    <MESSAGE value="Dodano nową tabelkę z informacjami pogodowymu" />
+    <option name="LAST_COMMIT_MESSAGE" value="Dodano nową tabelkę z informacjami pogodowymu" />
   </component>
 </project>

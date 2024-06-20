@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-
+import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.service.OpenWeatherMapService;
@@ -39,6 +39,10 @@ public class WeatherApp extends JFrame {
     private JLabel maxTempLabel;
     private JLabel minTempLabel;
     private JLabel avgHumidityLabel;
+    private JComboBox<String> unitsComboBox;
+    private Timer timer;
+    private boolean isMetric = true; // Default to metric units
+    private String currentLocation = ""; // Store current location for real-time updates
 
     public WeatherApp() {
         logger.info("Starting Weather app...");
@@ -90,8 +94,9 @@ public class WeatherApp extends JFrame {
         getWeatherButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String location = locationField.getText();
-                fetchWeather(location);
+                currentLocation = locationField.getText();
+                fetchWeather(currentLocation);
+                startRealTimeUpdates();
             }
         });
 
@@ -123,6 +128,25 @@ public class WeatherApp extends JFrame {
         gbc.gridy++;
         panel.add(avgHumidityLabel, gbc);
 
+        // Add units combo box
+        gbc.gridy++;
+        gbc.gridx = 0;
+        panel.add(new JLabel("Select units:"), gbc);
+        unitsComboBox = new JComboBox<>(new String[]{"Metric", "Imperial"});
+        gbc.gridx++;
+        panel.add(unitsComboBox, gbc);
+
+        unitsComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedUnit = (String) unitsComboBox.getSelectedItem();
+                isMetric = "Metric".equals(selectedUnit);
+                if (!currentLocation.isEmpty()) {
+                    fetchWeather(currentLocation); // Refetch weather data with the new units
+                }
+            }
+        });
+
         add(panel, BorderLayout.NORTH);
 
         // Initialize the chart panel
@@ -140,7 +164,7 @@ public class WeatherApp extends JFrame {
     private void fetchWeather(String location) {
         new Thread(() -> {
             try {
-                WeatherProvider weatherProvider = new OpenWeatherMapService();
+                WeatherProvider weatherProvider = new OpenWeatherMapService(isMetric);
                 WeatherData currentWeather = weatherProvider.getCurrentWeather(location);
                 List<WeatherData> hourlyWeather = weatherProvider.getWeather(location);
 
@@ -162,9 +186,25 @@ public class WeatherApp extends JFrame {
         }).start();
     }
 
+    private void startRealTimeUpdates() {
+        if (timer != null) {
+            timer.stop();
+        }
+
+        timer = new Timer(60000, new ActionListener() { // Update every minute (60000 ms)
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!currentLocation.isEmpty()) {
+                    fetchWeather(currentLocation);
+                }
+            }
+        });
+        timer.start();
+    }
+
     private void updateUI(WeatherData data) {
         locationLabel.setText("Location: " + data.getLocation());
-        temperatureLabel.setText("Temperature: " + data.getTemperature() + " °C");
+        temperatureLabel.setText("Temperature: " + data.getTemperature() + " " + (isMetric ? "°C" : "°F"));
         descriptionLabel.setText("Description: " + data.getDescription());
 
         String iconUrl = "http://openweathermap.org/img/wn/" + data.getIcon() + "@2x.png";
@@ -270,8 +310,8 @@ public class WeatherApp extends JFrame {
 
         double avgHumidity = totalHumidity / weatherDataList.size();
 
-        maxTempLabel.setText("Max Temperature: " + maxTemp + " °C");
-        minTempLabel.setText("Min Temperature: " + minTemp + " °C");
+        maxTempLabel.setText("Max Temperature: " + maxTemp + " " + (isMetric ? "°C" : "°F"));
+        minTempLabel.setText("Min Temperature: " + minTemp + " " + (isMetric ? "°C" : "°F"));
         avgHumidityLabel.setText("Average Humidity: " + avgHumidity + " %");
     }
 
