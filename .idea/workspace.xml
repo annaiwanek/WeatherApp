@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="dodano wykresy w czasie rzeczywistym">
+    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="naprawa błędów po rollbacku">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/OpenWeatherMapService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/OpenWeatherMapService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherChart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherChart.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,7 +93,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718873402709</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="naprawa błędów po rollbacku">
+      <option name="closed" value="true" />
+      <created>1718906849127</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1718906849128</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -99,6 +109,7 @@
     <MESSAGE value="Ulepszona wersja interfejsu, dodanie ikon, wykres czasowy rejestrujacy zmiany pogodny - działający" />
     <MESSAGE value="Naprawiono błędy związane z bazą danych" />
     <MESSAGE value="Dodano nową tabelkę z informacjami pogodowymu" />
-    <option name="LAST_COMMIT_MESSAGE" value="Dodano nową tabelkę z informacjami pogodowymu" />
+    <MESSAGE value="naprawa błędów po rollbacku" />
+    <option name="LAST_COMMIT_MESSAGE" value="naprawa błędów po rollbacku" />
   </component>
 </project>

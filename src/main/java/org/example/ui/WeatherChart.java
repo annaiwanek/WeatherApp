@@ -49,7 +49,7 @@ public class WeatherChart extends JFrame {
         renderer.setSeriesPaint(0, Color.RED); // Temperature
         renderer.setSeriesPaint(1, Color.BLUE); // Wind Speed
         renderer.setSeriesPaint(2, Color.GREEN); // Humidity
-        renderer.setSeriesPaint(3, Color.YELLOW); // Pressure
+        //renderer.setSeriesPaint(3, Color.YELLOW); // Pressure
         plot.setRenderer(renderer);
 
         // Customize the range axis
@@ -70,7 +70,7 @@ public class WeatherChart extends JFrame {
         XYSeries temperatureSeries = new XYSeries("Temperatura");
         XYSeries windSpeedSeries = new XYSeries("Prędkość wiatru");
         XYSeries humiditySeries = new XYSeries("Wilgotność");
-        XYSeries pressureSeries = new XYSeries("Ciśnienie");
+       // XYSeries pressureSeries = new XYSeries("Ciśnienie");
 
         int index = 0;
         for (WeatherData data : weatherDataList) {
@@ -78,7 +78,7 @@ public class WeatherChart extends JFrame {
                 temperatureSeries.add(index, data.getTemperature());
                 windSpeedSeries.add(index, data.getWindSpeed());
                 humiditySeries.add(index, data.getHumidity());
-                pressureSeries.add(index, data.getPressure());
+                //pressureSeries.add(index, data.getPressure());
                 index++;
             }
         }
@@ -87,7 +87,7 @@ public class WeatherChart extends JFrame {
         dataset.addSeries(temperatureSeries);
         dataset.addSeries(windSpeedSeries);
         dataset.addSeries(humiditySeries);
-        dataset.addSeries(pressureSeries);
+        //dataset.addSeries(pressureSeries);
 
         return dataset;
     }

@@ -1,14 +1,13 @@
 package org.example.ui;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.service.OpenWeatherMapService;
@@ -35,7 +34,7 @@ public class WeatherApp extends JFrame {
     private JLabel iconLabel;
     private WeatherDataDAO weatherDataDAO;
     private ChartPanel chartPanel;
-    private JTable dataTable;
+    private ChartPanel forecastChartPanel;
     private JLabel maxTempLabel;
     private JLabel minTempLabel;
     private JLabel avgHumidityLabel;
@@ -46,6 +45,14 @@ public class WeatherApp extends JFrame {
 
     public WeatherApp() {
         logger.info("Starting Weather app...");
+
+        // Set FlatLaf look and feel
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         setTitle("Weather App");
         setSize(1200, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,42 +61,21 @@ public class WeatherApp extends JFrame {
         // Initialize DAO
         weatherDataDAO = new WeatherDataDAO();
 
-        JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                // Draw gradient background
-                Graphics2D g2d = (Graphics2D) g;
-                int width = getWidth();
-                int height = getHeight();
-                Color color1 = new Color(135, 206, 235);
-                Color color2 = new Color(25, 25, 112);
-                GradientPaint gp = new GradientPaint(0, 0, color1, 0, height, color2);
-                g2d.setPaint(gp);
-                g2d.fillRect(0, 0, width, height);
-            }
-        };
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
 
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JLabel locationInputLabel = new JLabel("Enter location:");
         locationField = new JTextField(15);
-        panel.add(new JLabel("Enter location:"), gbc);
-        gbc.gridx++;
-        panel.add(locationField, gbc);
+        inputPanel.add(locationInputLabel);
+        inputPanel.add(locationField);
 
         JButton getWeatherButton = new JButton("Get Weather");
-        gbc.gridy++;
-        gbc.gridx = 0;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.NONE;
         getWeatherButton.setBackground(new Color(70, 130, 180));
         getWeatherButton.setForeground(Color.WHITE);
         getWeatherButton.setFocusPainted(false);
-        panel.add(getWeatherButton, gbc);
+        inputPanel.add(getWeatherButton);
 
         getWeatherButton.addActionListener(new ActionListener() {
             @Override
@@ -100,41 +86,12 @@ public class WeatherApp extends JFrame {
             }
         });
 
-        locationLabel = new JLabel("Location: ");
-        temperatureLabel = new JLabel("Temperature: ");
-        descriptionLabel = new JLabel("Description: ");
-        iconLabel = new JLabel();
-
-        gbc.gridy++;
-        gbc.gridx = 0;
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(locationLabel, gbc);
-        gbc.gridy++;
-        panel.add(temperatureLabel, gbc);
-        gbc.gridy++;
-        panel.add(descriptionLabel, gbc);
-        gbc.gridy++;
-        panel.add(iconLabel, gbc);
-
-        // Add summary labels
-        maxTempLabel = new JLabel("Max Temperature: ");
-        minTempLabel = new JLabel("Min Temperature: ");
-        avgHumidityLabel = new JLabel("Average Humidity: ");
-        gbc.gridy++;
-        panel.add(maxTempLabel, gbc);
-        gbc.gridy++;
-        panel.add(minTempLabel, gbc);
-        gbc.gridy++;
-        panel.add(avgHumidityLabel, gbc);
-
-        // Add units combo box
-        gbc.gridy++;
-        gbc.gridx = 0;
-        panel.add(new JLabel("Select units:"), gbc);
+        JPanel unitsPanel = new JPanel();
+        unitsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        JLabel unitsInputLabel = new JLabel("Select units:");
         unitsComboBox = new JComboBox<>(new String[]{"Metric", "Imperial"});
-        gbc.gridx++;
-        panel.add(unitsComboBox, gbc);
+        unitsPanel.add(unitsInputLabel);
+        unitsPanel.add(unitsComboBox);
 
         unitsComboBox.addActionListener(new ActionListener() {
             @Override
@@ -147,18 +104,55 @@ public class WeatherApp extends JFrame {
             }
         });
 
-        add(panel, BorderLayout.NORTH);
+        topPanel.add(inputPanel, BorderLayout.WEST);
+        topPanel.add(unitsPanel, BorderLayout.EAST);
+
+        JPanel weatherInfoPanel = new JPanel();
+        weatherInfoPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        locationLabel = new JLabel("Location: ");
+        weatherInfoPanel.add(locationLabel, gbc);
+        gbc.gridx++;
+        temperatureLabel = new JLabel("Temperature: ");
+        weatherInfoPanel.add(temperatureLabel, gbc);
+        gbc.gridx = 0;
+        gbc.gridy++;
+        descriptionLabel = new JLabel("Description: ");
+        weatherInfoPanel.add(descriptionLabel, gbc);
+        gbc.gridx++;
+        iconLabel = new JLabel();
+        weatherInfoPanel.add(iconLabel, gbc);
+
+        topPanel.add(weatherInfoPanel, BorderLayout.SOUTH);
+        add(topPanel, BorderLayout.NORTH);
+
+        JPanel summaryPanel = new JPanel();
+        summaryPanel.setLayout(new GridLayout(1, 3));
+        maxTempLabel = new JLabel("Max Temperature: ");
+        minTempLabel = new JLabel("Min Temperature: ");
+        avgHumidityLabel = new JLabel("Average Humidity: ");
+
+        summaryPanel.add(maxTempLabel);
+        summaryPanel.add(minTempLabel);
+        summaryPanel.add(avgHumidityLabel);
+
+        add(summaryPanel, BorderLayout.SOUTH);
 
         // Initialize the chart panel
         chartPanel = new ChartPanel(null);
-        chartPanel.setPreferredSize(new Dimension(800, 400));
-        add(chartPanel, BorderLayout.CENTER);
+        chartPanel.setPreferredSize(new Dimension(600, 400));
+        forecastChartPanel = new ChartPanel(null);
+        forecastChartPanel.setPreferredSize(new Dimension(600, 400));
 
-        // Initialize the data table
-        dataTable = new JTable();
-        JScrollPane scrollPane = new JScrollPane(dataTable);
-        scrollPane.setPreferredSize(new Dimension(800, 200));
-        add(scrollPane, BorderLayout.SOUTH);
+        JPanel chartContainerPanel = new JPanel();
+        chartContainerPanel.setLayout(new GridLayout(2, 1));
+        chartContainerPanel.add(chartPanel);
+        chartContainerPanel.add(forecastChartPanel);
+
+        add(chartContainerPanel, BorderLayout.CENTER);
     }
 
     private void fetchWeather(String location) {
@@ -177,7 +171,7 @@ public class WeatherApp extends JFrame {
                 SwingUtilities.invokeLater(() -> {
                     updateUI(currentWeather);
                     updateChart(weatherDataDAO.getAllWeatherData());
-                    updateTable(weatherDataDAO.getAllWeatherData());
+                    updateForecastChart(hourlyWeather);
                     updateSummary(weatherDataDAO.getAllWeatherData());
                 });
             } catch (Exception e) {
@@ -209,7 +203,7 @@ public class WeatherApp extends JFrame {
 
         String iconUrl = "http://openweathermap.org/img/wn/" + data.getIcon() + "@2x.png";
         try {
-            iconLabel.setIcon(new ImageIcon(new ImageIcon(new URL(iconUrl)).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
+            iconLabel.setIcon(new ImageIcon(new ImageIcon(new URL(iconUrl)).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -237,7 +231,6 @@ public class WeatherApp extends JFrame {
         renderer.setSeriesPaint(0, Color.RED); // Temperature
         renderer.setSeriesPaint(1, Color.BLUE); // Wind Speed
         renderer.setSeriesPaint(2, Color.GREEN); // Humidity
-        renderer.setSeriesPaint(3, Color.YELLOW); // Pressure
         plot.setRenderer(renderer);
 
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
@@ -249,11 +242,43 @@ public class WeatherApp extends JFrame {
         chartPanel.setChart(chart);
     }
 
+    private void updateForecastChart(List<WeatherData> weatherDataList) {
+        XYSeriesCollection dataset = createForecastDataset(weatherDataList);
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "Weather Forecast",
+                "Time",
+                "Value",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false);
+
+        chart.setBackgroundPaint(Color.white);
+
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.lightGray);
+        plot.setDomainGridlinePaint(Color.white);
+        plot.setRangeGridlinePaint(Color.white);
+
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        renderer.setSeriesPaint(0, Color.RED); // Temperature
+        renderer.setSeriesPaint(1, Color.BLUE); // Wind Speed
+        renderer.setSeriesPaint(2, Color.GREEN); // Humidity
+        plot.setRenderer(renderer);
+
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+        ValueAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setVerticalTickLabels(true);
+
+        forecastChartPanel.setChart(chart);
+    }
+
     private XYSeriesCollection createDataset(List<WeatherData> weatherDataList) {
         XYSeries temperatureSeries = new XYSeries("Temperature");
         XYSeries windSpeedSeries = new XYSeries("Wind Speed");
         XYSeries humiditySeries = new XYSeries("Humidity");
-        XYSeries pressureSeries = new XYSeries("Pressure");
 
         int index = 0;
         for (WeatherData data : weatherDataList) {
@@ -261,7 +286,6 @@ public class WeatherApp extends JFrame {
                 temperatureSeries.add(index, data.getTemperature());
                 windSpeedSeries.add(index, data.getWindSpeed());
                 humiditySeries.add(index, data.getHumidity());
-                pressureSeries.add(index, data.getPressure());
                 index++;
             }
         }
@@ -270,27 +294,31 @@ public class WeatherApp extends JFrame {
         dataset.addSeries(temperatureSeries);
         dataset.addSeries(windSpeedSeries);
         dataset.addSeries(humiditySeries);
-        dataset.addSeries(pressureSeries);
 
         return dataset;
     }
 
-    private void updateTable(List<WeatherData> weatherDataList) {
-        String[] columnNames = {"Timestamp", "Temperature", "Wind Speed", "Humidity", "Pressure"};
-        Object[][] data = new Object[weatherDataList.size()][5];
+    private XYSeriesCollection createForecastDataset(List<WeatherData> weatherDataList) {
+        XYSeries temperatureSeries = new XYSeries("Temperature");
+        XYSeries windSpeedSeries = new XYSeries("Wind Speed");
+        XYSeries humiditySeries = new XYSeries("Humidity");
 
         int index = 0;
-        for (WeatherData weatherData : weatherDataList) {
-            data[index][0] = weatherData.getTimestamp();
-            data[index][1] = weatherData.getTemperature();
-            data[index][2] = weatherData.getWindSpeed();
-            data[index][3] = weatherData.getHumidity();
-            data[index][4] = weatherData.getPressure();
-            index++;
+        for (WeatherData data : weatherDataList) {
+            if (data.getTimestamp() != null) {
+                temperatureSeries.add(index, data.getTemperature());
+                windSpeedSeries.add(index, data.getWindSpeed());
+                humiditySeries.add(index, data.getHumidity());
+                index++;
+            }
         }
 
-        DefaultTableModel model = new DefaultTableModel(data, columnNames);
-        dataTable.setModel(model);
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(temperatureSeries);
+        dataset.addSeries(windSpeedSeries);
+        dataset.addSeries(humiditySeries);
+
+        return dataset;
     }
 
     private void updateSummary(List<WeatherData> weatherDataList) {
