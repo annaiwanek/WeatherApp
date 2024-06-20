@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="Dodano nową tabelkę z informacjami pogodowymu">
+    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="dodano wykresy w czasie rzeczywistym">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/service/OpenWeatherMapService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/service/OpenWeatherMapService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class OpenWeatherMapService implements WeatherProvider {
     private static final Logger logger = LogManager.getLogger(OpenWeatherMapService.class);
-    private static final String API_KEY = "0c0db97fe14bea879471294b5774742f";
+    private static final String API_KEY = "22235b26b7ac6a135126512bf6a8d8e9";
     private static final String API_URL = "http://api.openweathermap.org/data/2.5/forecast?q=%s&appid=%s&units=%s";
     private static final String CURRENT_API_URL = "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=%s";
 
