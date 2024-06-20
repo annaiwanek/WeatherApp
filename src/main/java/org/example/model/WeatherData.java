@@ -8,7 +8,7 @@ public class WeatherData {
     private double windSpeed;
     private double humidity;
     private double pressure;
-    private String timestamp; // Może być null dla bieżących danych
+    private String timestamp;
 
     public WeatherData(String location, double temperature, String description, String icon, double windSpeed, double humidity, double pressure, String timestamp) {
         this.location = location;
@@ -18,10 +18,10 @@ public class WeatherData {
         this.windSpeed = windSpeed;
         this.humidity = humidity;
         this.pressure = pressure;
-        this.timestamp = timestamp; // Może być null
+        this.timestamp = timestamp;
     }
 
-    // Gettery
+    // Getters
     public String getLocation() { return location; }
     public double getTemperature() { return temperature; }
     public String getDescription() { return description; }

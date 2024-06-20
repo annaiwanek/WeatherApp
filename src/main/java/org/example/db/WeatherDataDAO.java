@@ -8,7 +8,7 @@ import java.util.List;
 
 public class WeatherDataDAO {
 
-    private static final String DB_URL = "jdbc:sqlite:weather.db";
+    private static final String DB_URL = "jdbc:sqlite:src/main/resources/weather.db";
 
     public WeatherDataDAO() {
         try (Connection conn = DriverManager.getConnection(DB_URL)) {
@@ -17,10 +17,10 @@ public class WeatherDataDAO {
                     + "location TEXT NOT NULL, "
                     + "temperature REAL NOT NULL, "
                     + "description TEXT NOT NULL, "
-                    + "icon TEXT NOT NULL, "
-                    + "windSpeed REAL, "
-                    + "humidity REAL, "
-                    + "pressure REAL, "
+                    + "icon_code TEXT NOT NULL, "
+                    + "wind_speed REAL, "
+                    + "humidity INTEGER, "
+                    + "pressure INTEGER, "
                     + "timestamp TEXT NOT NULL)";
             Statement stmt = conn.createStatement();
             stmt.execute(createTableSQL);
@@ -30,7 +30,7 @@ public class WeatherDataDAO {
     }
 
     public void saveWeatherData(WeatherData data) {
-        String insertSQL = "INSERT INTO weather(location, temperature, description, icon, windSpeed, humidity, pressure, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO weather(location, temperature, description, icon_code, wind_speed, humidity, pressure, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
             pstmt.setString(1, data.getLocation());
@@ -38,9 +38,9 @@ public class WeatherDataDAO {
             pstmt.setString(3, data.getDescription());
             pstmt.setString(4, data.getIcon());
             pstmt.setDouble(5, data.getWindSpeed());
-            pstmt.setDouble(6, data.getHumidity());
-            pstmt.setDouble(7, data.getPressure());
-            pstmt.setString(8, data.getTimestamp());
+            pstmt.setInt(6, (int) data.getHumidity());
+            pstmt.setInt(7, (int) data.getPressure());
+            pstmt.setString(8, data.getTimestamp() != null ? data.getTimestamp() : "N/A"); // Ensure timestamp is not null
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -49,7 +49,7 @@ public class WeatherDataDAO {
 
     public List<WeatherData> getAllWeatherData() {
         List<WeatherData> weatherDataList = new ArrayList<>();
-        String selectSQL = "SELECT location, temperature, description, icon, windSpeed, humidity, pressure, timestamp FROM weather";
+        String selectSQL = "SELECT location, temperature, description, icon_code, wind_speed, humidity, pressure, timestamp FROM weather";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(selectSQL)) {
@@ -57,10 +57,10 @@ public class WeatherDataDAO {
                 String location = rs.getString("location");
                 double temperature = rs.getDouble("temperature");
                 String description = rs.getString("description");
-                String icon = rs.getString("icon");
-                double windSpeed = rs.getDouble("windSpeed");
-                double humidity = rs.getDouble("humidity");
-                double pressure = rs.getDouble("pressure");
+                String icon = rs.getString("icon_code");
+                double windSpeed = rs.getDouble("wind_speed");
+                int humidity = rs.getInt("humidity");
+                int pressure = rs.getInt("pressure");
                 String timestamp = rs.getString("timestamp");
                 weatherDataList.add(new WeatherData(location, temperature, description, icon, windSpeed, humidity, pressure, timestamp));
             }

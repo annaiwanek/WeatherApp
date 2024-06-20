@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class WeatherDatabase {
-    private static final String URL = "jdbc:sqlite:weather.db";
+    private static final String URL = "jdbc:sqlite:src/main/resources/weather.db";
 
     public static Connection connect() throws SQLException {
         return DriverManager.getConnection(URL);

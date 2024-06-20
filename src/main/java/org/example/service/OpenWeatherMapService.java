@@ -55,11 +55,11 @@ public class OpenWeatherMapService implements WeatherProvider {
             String description = obj.getJSONArray("weather").getJSONObject(0).getString("description");
             String icon = obj.getJSONArray("weather").getJSONObject(0).getString("icon");
             double windSpeed = obj.getJSONObject("wind").getDouble("speed");
-            double humidity = obj.getJSONObject("main").getDouble("humidity");
-            double pressure = obj.getJSONObject("main").getDouble("pressure");
+            int humidity = obj.getJSONObject("main").getInt("humidity");
+            int pressure = obj.getJSONObject("main").getInt("pressure");
 
             logger.info("Parsed current weather data for location: {}", location);
-            return new WeatherData(location, temperature, description, icon, windSpeed, humidity, pressure, null);
+            return new WeatherData(location, temperature, description, icon, windSpeed, humidity, pressure, "N/A");
         } catch (Exception e) {
             logger.error("Error while parsing current weather data: {}", e.getMessage());
             throw new Exception("Error while parsing current weather data: " + e.getMessage(), e);
@@ -107,8 +107,8 @@ public class OpenWeatherMapService implements WeatherProvider {
                 String description = entry.getJSONArray("weather").getJSONObject(0).getString("description");
                 String icon = entry.getJSONArray("weather").getJSONObject(0).getString("icon");
                 double windSpeed = entry.getJSONObject("wind").getDouble("speed");
-                double humidity = entry.getJSONObject("main").getDouble("humidity");
-                double pressure = entry.getJSONObject("main").getDouble("pressure");
+                int humidity = entry.getJSONObject("main").getInt("humidity");
+                int pressure = entry.getJSONObject("main").getInt("pressure");
                 String timestamp = entry.getString("dt_txt");
 
                 weatherDataList.add(new WeatherData(location, temperature, description, icon, windSpeed, humidity, pressure, timestamp));
