@@ -24,7 +24,6 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.title.TextTitle;
 
 public class WeatherApp extends JFrame {
     private static Logger logger = LogManager.getLogger(WeatherApp.class);
@@ -34,7 +33,6 @@ public class WeatherApp extends JFrame {
     private JLabel descriptionLabel;
     private JLabel iconLabel;
     private WeatherDataDAO weatherDataDAO;
-    private Image backgroundImage;
     private ChartPanel chartPanel;
 
     public WeatherApp() {
@@ -43,9 +41,6 @@ public class WeatherApp extends JFrame {
         setSize(800, 600); // Zwiększenie rozmiaru okna
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-
-        // Load background image
-        backgroundImage = new ImageIcon("src/main/resources/cumulus.jpg").getImage();
 
         // Initialize DAO
         weatherDataDAO = new WeatherDataDAO();
@@ -112,21 +107,6 @@ public class WeatherApp extends JFrame {
         gbc.gridy++;
         panel.add(iconLabel, gbc);
 
-        JButton showChartButton = new JButton("Pokaż Wykres");
-        gbc.gridy++;
-        gbc.gridx = 0;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.NONE;
-        panel.add(showChartButton, gbc);
-
-        showChartButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                List<WeatherData> weatherDataList = weatherDataDAO.getAllWeatherData();
-                updateChart(weatherDataList);
-            }
-        });
-
         add(panel, BorderLayout.NORTH);
 
         // Initialize the chart panel
@@ -148,7 +128,10 @@ public class WeatherApp extends JFrame {
                     weatherDataDAO.saveWeatherData(weatherData);
                 }
 
-                SwingUtilities.invokeLater(() -> updateUI(currentWeather));
+                SwingUtilities.invokeLater(() -> {
+                    updateUI(currentWeather);
+                    updateChart(weatherDataDAO.getAllWeatherData());
+                });
             } catch (Exception e) {
                 SwingUtilities.invokeLater(() -> showError(e.getMessage()));
             }
