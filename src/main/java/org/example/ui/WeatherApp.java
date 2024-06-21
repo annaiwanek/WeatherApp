@@ -8,6 +8,7 @@ import org.example.model.WeatherData;
 import org.example.service.OpenWeatherMapService;
 import org.example.service.WeatherProvider;
 import org.jxmapviewer.JXMapViewer;
+import org.jxmapviewer.input.*;
 import org.jxmapviewer.painter.CompoundPainter;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.*;
@@ -26,10 +27,7 @@ import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -200,6 +198,42 @@ public class WeatherApp extends JFrame {
         mapViewer.setAddressLocation(new GeoPosition(52.2297, 21.0122)); // Default location (Warsaw, Poland)
 
         logger.info("Map initialized and set to default location (Warsaw, Poland)");
+
+        // Add interactions
+        PanMouseInputListener mia = new PanMouseInputListener(mapViewer);
+        mapViewer.addMouseListener(mia);
+        mapViewer.addMouseMotionListener(mia);
+        mapViewer.addMouseWheelListener(new ZoomMouseWheelListenerCenter(mapViewer));
+        mapViewer.addKeyListener(new PanKeyListener(mapViewer));
+        mapViewer.addMouseListener(new CenterMapListener(mapViewer));
+
+        // Add mouse motion listener for tooltips
+        mapViewer.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                handleMouseMoved(e);
+            }
+        });
+    }
+
+    private void handleMouseMoved(MouseEvent e) {
+        Point mousePoint = e.getPoint();
+        GeoPosition geoPosition = mapViewer.convertPointToGeoPosition(mousePoint);
+
+        for (WeatherWaypoint waypoint : waypoints) {
+            Point2D waypointPoint = mapViewer.getTileFactory().geoToPixel(waypoint.getPosition(), mapViewer.getZoom());
+            if (waypointPoint.distance(mousePoint) < 20) { // 20 pixels threshold
+                String tooltipText = String.format("<html><b>%s</b><br/>Temp: %.2f°C<br/>Wind: %.2f m/s<br/>Humidity: %.2f%%</html>",
+                        waypoint.getWeatherData().getDescription(),
+                        waypoint.getWeatherData().getTemperature(),
+                        waypoint.getWeatherData().getWindSpeed(),
+                        waypoint.getWeatherData().getHumidity());
+                mapViewer.setToolTipText(tooltipText);
+                ToolTipManager.sharedInstance().mouseMoved(new MouseEvent(mapViewer, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, e.getX(), e.getY(), e.getClickCount(), e.isPopupTrigger()));
+                return;
+            }
+        }
+        mapViewer.setToolTipText(null);
     }
 
     private void fetchWeather(String location) {
