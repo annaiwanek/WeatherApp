@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class WeatherWaypointRenderer implements WaypointRenderer<WeatherWaypoint> {
+
     private final Font font = new Font("Arial", Font.PLAIN, 12);
 
     @Override
@@ -17,15 +18,32 @@ public class WeatherWaypointRenderer implements WaypointRenderer<WeatherWaypoint
         Point2D point = map.getTileFactory().geoToPixel(waypoint.getPosition(), map.getZoom());
         Point drawPoint = new Point((int) point.getX(), (int) point.getY());
 
-        String text = String.format("%s\nTemp: %.2f°C\nWind: %.2f m/s\nHumidity: %.2f%%",
-                waypoint.getWeatherData().getDescription(),
-                waypoint.getWeatherData().getTemperature(),
-                waypoint.getWeatherData().getWindSpeed(),
-                waypoint.getWeatherData().getHumidity());
+        String description = waypoint.getWeatherData().getDescription();
+        String temperature = "Temp: " + waypoint.getWeatherData().getTemperature() + "°C";
+        String windSpeed = "Wind: " + waypoint.getWeatherData().getWindSpeed() + " m/s";
+        String humidity = "Humidity: " + waypoint.getWeatherData().getHumidity() + "%";
 
         g.setFont(font);
         g.setColor(Color.BLACK);
-        g.drawString(text, drawPoint.x + 5, drawPoint.y);
+        FontMetrics fm = g.getFontMetrics();
+        int maxWidth = Math.max(Math.max(fm.stringWidth(description), fm.stringWidth(temperature)), Math.max(fm.stringWidth(windSpeed), fm.stringWidth(humidity)));
+        int textHeight = fm.getHeight() * 4; // 4 lines of text
+
+        int boxX = drawPoint.x + 30; // Shift the box further to the right
+        int boxY = drawPoint.y - textHeight - 30; // Shift the box further up
+
+        g.setColor(new Color(255, 255, 255, 200));
+        g.fillRoundRect(boxX, boxY, maxWidth + 20, textHeight + 20, 10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(boxX, boxY, maxWidth + 20, textHeight + 20, 10, 10);
+
+        int textX = boxX + 10;
+        int textY = boxY + fm.getAscent() + 10;
+
+        g.drawString(description, textX, textY);
+        g.drawString(temperature, textX, textY + fm.getHeight());
+        g.drawString(windSpeed, textX, textY + fm.getHeight() * 2);
+        g.drawString(humidity, textX, textY + fm.getHeight() * 3);
 
         try {
             URL url = new URL("http://openweathermap.org/img/wn/" + waypoint.getWeatherData().getIcon() + "@2x.png");

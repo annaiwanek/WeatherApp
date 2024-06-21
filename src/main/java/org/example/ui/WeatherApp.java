@@ -8,10 +8,9 @@ import org.example.model.WeatherData;
 import org.example.service.OpenWeatherMapService;
 import org.example.service.WeatherProvider;
 import org.jxmapviewer.JXMapViewer;
-import org.jxmapviewer.viewer.DefaultTileFactory;
-import org.jxmapviewer.viewer.GeoPosition;
-import org.jxmapviewer.viewer.TileFactoryInfo;
-import org.jxmapviewer.viewer.WaypointPainter;
+import org.jxmapviewer.painter.CompoundPainter;
+import org.jxmapviewer.painter.Painter;
+import org.jxmapviewer.viewer.*;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -23,11 +22,15 @@ import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -39,10 +42,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.json.JSONObject;
 
 public class WeatherApp extends JFrame {
-    private static Logger logger = LogManager.getLogger(WeatherApp.class);
+    private static final Logger logger = LogManager.getLogger(WeatherApp.class);
     private JTextField locationField;
     private JLabel locationLabel;
     private JLabel temperatureLabel;
@@ -55,10 +57,11 @@ public class WeatherApp extends JFrame {
     private JLabel minTempLabel;
     private JLabel avgHumidityLabel;
     private JComboBox<String> unitsComboBox;
-    private Timer timer;
-    private boolean isMetric = true; // Default to metric units
-    private String currentLocation = ""; // Store current location for real-time updates
+    private javax.swing.Timer timer;
+    private boolean isMetric = true;
+    private String currentLocation = "";
     private JXMapViewer mapViewer;
+    private Set<WeatherWaypoint> waypoints = new HashSet<>();
 
     private static final String GEO_API_URL = "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s";
 
@@ -232,7 +235,7 @@ public class WeatherApp extends JFrame {
             timer.stop();
         }
 
-        timer = new Timer(60000, new ActionListener() { // Update every minute (60000 ms)
+        timer = new javax.swing.Timer(60000, new ActionListener() { // Update every minute (60000 ms)
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!currentLocation.isEmpty()) {
@@ -249,14 +252,14 @@ public class WeatherApp extends JFrame {
         descriptionLabel.setText("Description: " + data.getDescription());
 
         String iconUrl = "http://openweathermap.org/img/wn/" + data.getIcon() + "@2x.png";
-        logger.info("Icon URL: " + iconUrl); // Dodane logowanie URL
+        logger.info("Icon URL: " + iconUrl);
 
         try {
             URL url = new URL(iconUrl);
             ImageIcon icon = new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
             if (icon.getImageLoadStatus() == MediaTracker.COMPLETE) {
                 iconLabel.setIcon(icon);
-                logger.info("Icon loaded successfully from URL: " + iconUrl); // Dodane logowanie sukcesu
+                logger.info("Icon loaded successfully from URL: " + iconUrl);
             } else {
                 logger.error("Failed to load icon from URL: " + iconUrl);
                 iconLabel.setIcon(null);
@@ -395,13 +398,18 @@ public class WeatherApp extends JFrame {
         mapViewer.setZoom(6);
 
         // Add a waypoint for the weather data
-        Set<WeatherWaypoint> waypoints = new HashSet<>();
+        waypoints.clear();
         waypoints.add(new WeatherWaypoint(weatherData, geoPosition));
 
         WaypointPainter<WeatherWaypoint> waypointPainter = new WaypointPainter<>();
         waypointPainter.setWaypoints(waypoints);
         waypointPainter.setRenderer(new WeatherWaypointRenderer());
-        mapViewer.setOverlayPainter(waypointPainter);
+
+        List<Painter<JXMapViewer>> painters = new java.util.ArrayList<>();
+        painters.add(waypointPainter);
+
+        CompoundPainter<JXMapViewer> painter = new CompoundPainter<>(painters);
+        mapViewer.setOverlayPainter(painter);
 
         logger.info("Map updated with new location and waypoint");
     }
