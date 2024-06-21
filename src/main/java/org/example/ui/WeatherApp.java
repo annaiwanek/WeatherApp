@@ -1,37 +1,46 @@
 package org.example.ui;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.example.db.WeatherDataDAO;
+import org.example.model.WeatherData;
 import org.example.service.OpenWeatherMapService;
 import org.example.service.WeatherProvider;
-import org.example.model.WeatherData;
-import org.example.db.WeatherDataDAO;
+import org.jxmapviewer.JXMapViewer;
+import org.jxmapviewer.viewer.DefaultTileFactory;
+import org.jxmapviewer.viewer.GeoPosition;
+import org.jxmapviewer.viewer.TileFactoryInfo;
+import org.jxmapviewer.viewer.Waypoint;
+import org.jxmapviewer.viewer.WaypointPainter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.axis.DateAxis;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.json.JSONObject;
 
 public class WeatherApp extends JFrame {
     private static Logger logger = LogManager.getLogger(WeatherApp.class);
@@ -50,6 +59,9 @@ public class WeatherApp extends JFrame {
     private Timer timer;
     private boolean isMetric = true; // Default to metric units
     private String currentLocation = ""; // Store current location for real-time updates
+    private JXMapViewer mapViewer;
+
+    private static final String GEO_API_URL = "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s";
 
     public WeatherApp() {
         logger.info("Starting Weather app...");
@@ -161,6 +173,31 @@ public class WeatherApp extends JFrame {
         chartContainerPanel.add(forecastChartPanel);
 
         add(chartContainerPanel, BorderLayout.CENTER);
+
+        // Initialize the map panel
+        initializeMap();
+        JScrollPane mapScrollPane = new JScrollPane(mapViewer);
+        mapScrollPane.setPreferredSize(new Dimension(600, 400)); // Adjust the size as needed
+        add(mapScrollPane, BorderLayout.EAST);
+    }
+
+    private void initializeMap() {
+        mapViewer = new JXMapViewer();
+        TileFactoryInfo info = new TileFactoryInfo(1, 15, 17,
+                256, true, true, "http://tile.openstreetmap.org",
+                "x", "y", "z") {
+            @Override
+            public String getTileUrl(int x, int y, int zoom) {
+                int z = 17 - zoom;
+                return this.baseURL + "/" + z + "/" + x + "/" + y + ".png";
+            }
+        };
+        DefaultTileFactory tileFactory = new DefaultTileFactory(info);
+        mapViewer.setTileFactory(tileFactory);
+        mapViewer.setZoom(4);
+        mapViewer.setAddressLocation(new GeoPosition(52.2297, 21.0122)); // Default location (Warsaw, Poland)
+
+        logger.info("Map initialized and set to default location (Warsaw, Poland)");
     }
 
     private void fetchWeather(String location) {
@@ -176,11 +213,14 @@ public class WeatherApp extends JFrame {
                     weatherDataDAO.saveWeatherData(weatherData);
                 }
 
+                GeoPosition geoPosition = fetchCoordinates(location);
+
                 SwingUtilities.invokeLater(() -> {
                     updateUI(currentWeather);
                     updateChart(weatherDataDAO.getAllWeatherData());
                     updateForecastChart(hourlyWeather);
                     updateSummary(weatherDataDAO.getAllWeatherData());
+                    updateMap(geoPosition, currentWeather);
                 });
             } catch (Exception e) {
                 SwingUtilities.invokeLater(() -> showError(e.getMessage()));
@@ -210,10 +250,24 @@ public class WeatherApp extends JFrame {
         descriptionLabel.setText("Description: " + data.getDescription());
 
         String iconUrl = "http://openweathermap.org/img/wn/" + data.getIcon() + "@2x.png";
+        logger.info("Icon URL: " + iconUrl); // Dodane logowanie URL
+
         try {
-            iconLabel.setIcon(new ImageIcon(new ImageIcon(new URL(iconUrl)).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+            URL url = new URL(iconUrl);
+            ImageIcon icon = new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+            if (icon.getImageLoadStatus() == MediaTracker.COMPLETE) {
+                iconLabel.setIcon(icon);
+                logger.info("Icon loaded successfully from URL: " + iconUrl); // Dodane logowanie sukcesu
+            } else {
+                logger.error("Failed to load icon from URL: " + iconUrl);
+                iconLabel.setIcon(null);
+            }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.error("Malformed URL for weather icon: " + iconUrl, e);
+            iconLabel.setIcon(null);
+        } catch (Exception e) {
+            logger.error("Error loading weather icon from URL: " + iconUrl, e);
+            iconLabel.setIcon(null);
         }
     }
 
@@ -335,6 +389,48 @@ public class WeatherApp extends JFrame {
         plot.setDomainAxis(domainAxis);
 
         forecastChartPanel.setChart(chart);
+    }
+
+    private void updateMap(GeoPosition geoPosition, WeatherData weatherData) {
+        mapViewer.setCenterPosition(geoPosition);
+        mapViewer.setZoom(6);
+
+        // Add a waypoint for the weather data
+        // In a real-world application, you would create a custom waypoint renderer to display the weather data
+        Set<Waypoint> waypoints = new HashSet<>();
+        waypoints.add(new WeatherWaypoint(weatherData, geoPosition));
+
+        WaypointPainter<Waypoint> waypointPainter = new WaypointPainter<>();
+        waypointPainter.setWaypoints(waypoints);
+        mapViewer.setOverlayPainter(waypointPainter);
+
+        logger.info("Map updated with new location and waypoint");
+    }
+
+    private GeoPosition fetchCoordinates(String location) throws Exception {
+        String urlString = String.format(GEO_API_URL, location, "22235b26b7ac6a135126512bf6a8d8e9");
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode == 200) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+
+            JSONObject json = new JSONObject(content.toString());
+            double latitude = json.getJSONObject("coord").getDouble("lat");
+            double longitude = json.getJSONObject("coord").getDouble("lon");
+
+            return new GeoPosition(latitude, longitude);
+        } else {
+            throw new Exception("Failed to fetch coordinates: " + responseCode);
+        }
     }
 
     private void updateSummary(List<WeatherData> weatherDataList) {

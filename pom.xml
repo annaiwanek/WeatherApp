@@ -60,7 +60,27 @@
             <version>3.0</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>22.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>22.0.1</version>
+        </dependency>
+
+        <!-- JXMapViewer2 dependency -->
+        <dependency>
+            <groupId>org.jxmapviewer</groupId>
+            <artifactId>jxmapviewer2</artifactId>
+            <version>2.5</version>
+        </dependency>
     </dependencies>
+
 
     <build>
         <plugins>

@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="poprawa interfejsu nowy wykres">
+    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="clean up - usunięcie niepotrzebnych klas, uproszczenie kodu">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherWaypoint.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/db/WeatherDataDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/db/WeatherDataDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/db/WeatherDatabase.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherChart.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +23,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectColorInfo">{
@@ -36,16 +40,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.WeatherApp.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Application.WatherApp.executor": "Run",
+    "Application.WeatherApp.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "javaFxIntegration",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/User/.jdks/javafx-sdk-22.0.1",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2"
   }
-}</component>
+}]]></component>
+  <component name="RunManager">
+    <configuration name="WatherApp" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="org.example.ui.WeatherApp" />
+      <module name="WeatherApp" />
+      <option name="VM_PARAMETERS" value="--module-path C:\Users\User\.jdks\javafx-sdk-22.0.1\lib --add-modules javafx.controls" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -102,7 +121,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718906849128</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="clean up - usunięcie niepotrzebnych klas, uproszczenie kodu">
+      <option name="closed" value="true" />
+      <created>1718958074210</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1718958074210</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -111,6 +138,7 @@
     <MESSAGE value="Naprawiono błędy związane z bazą danych" />
     <MESSAGE value="Dodano nową tabelkę z informacjami pogodowymu" />
     <MESSAGE value="naprawa błędów po rollbacku" />
-    <option name="LAST_COMMIT_MESSAGE" value="naprawa błędów po rollbacku" />
+    <MESSAGE value="clean up - usunięcie niepotrzebnych klas, uproszczenie kodu" />
+    <option name="LAST_COMMIT_MESSAGE" value="clean up - usunięcie niepotrzebnych klas, uproszczenie kodu" />
   </component>
 </project>
