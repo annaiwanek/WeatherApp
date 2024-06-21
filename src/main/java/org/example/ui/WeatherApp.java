@@ -179,6 +179,9 @@ public class WeatherApp extends JFrame {
         JScrollPane mapScrollPane = new JScrollPane(mapViewer);
         mapScrollPane.setPreferredSize(new Dimension(600, 400)); // Adjust the size as needed
         add(mapScrollPane, BorderLayout.EAST);
+
+        // Fetch default weather for Warsaw
+        fetchWeather("Warsaw");
     }
 
     private void initializeMap() {

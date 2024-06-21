@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="praca nad mapką pogodową - ikona + dymek z informacjami pogodowymi">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -156,7 +155,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718993297333</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="praca nad mapką pogodową - ikona + dymek z informacjami pogodowymi">
+      <option name="closed" value="true" />
+      <created>1718994874235</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1718994874235</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
