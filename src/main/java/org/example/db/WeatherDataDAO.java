@@ -24,6 +24,7 @@ public class WeatherDataDAO {
                     + "timestamp TEXT NOT NULL)";
             Statement stmt = conn.createStatement();
             stmt.execute(createTableSQL);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -40,7 +41,7 @@ public class WeatherDataDAO {
             pstmt.setDouble(5, data.getWindSpeed());
             pstmt.setInt(6, (int) data.getHumidity());
             pstmt.setInt(7, (int) data.getPressure());
-            pstmt.setString(8, data.getTimestamp() != null ? data.getTimestamp() : "N/A"); // Ensure timestamp is not null
+            pstmt.setString(8, data.getTimestamp() != null ? data.getTimestamp() : "N/A");
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -8,6 +8,9 @@ import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.service.OpenWeatherMapService;
@@ -24,6 +27,11 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.data.time.Second;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYDataset;
 
 public class WeatherApp extends JFrame {
     private static Logger logger = LogManager.getLogger(WeatherApp.class);
@@ -209,15 +217,68 @@ public class WeatherApp extends JFrame {
         }
     }
 
-    private void updateChart(List<WeatherData> weatherDataList) {
-        XYSeriesCollection dataset = createDataset(weatherDataList);
+    private XYDataset createDataset(List<WeatherData> weatherDataList) {
+        TimeSeries temperatureSeries = new TimeSeries("Temperature");
+        TimeSeries windSpeedSeries = new TimeSeries("Wind Speed");
+        TimeSeries humiditySeries = new TimeSeries("Humidity");
 
-        JFreeChart chart = ChartFactory.createXYLineChart(
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (WeatherData data : weatherDataList) {
+            if (data.getTimestamp() != null && !data.getTimestamp().equals("N/A")) {
+                try {
+                    Date date = sdf.parse(data.getTimestamp());
+                    temperatureSeries.addOrUpdate(new Second(date), data.getTemperature());
+                    windSpeedSeries.addOrUpdate(new Second(date), data.getWindSpeed());
+                    humiditySeries.addOrUpdate(new Second(date), data.getHumidity());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(temperatureSeries);
+        dataset.addSeries(windSpeedSeries);
+        dataset.addSeries(humiditySeries);
+
+        return dataset;
+    }
+
+    private XYDataset createForecastDataset(List<WeatherData> weatherDataList) {
+        TimeSeries temperatureSeries = new TimeSeries("Temperature");
+        TimeSeries windSpeedSeries = new TimeSeries("Wind Speed");
+        TimeSeries humiditySeries = new TimeSeries("Humidity");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (WeatherData data : weatherDataList) {
+            if (data.getTimestamp() != null && !data.getTimestamp().equals("N/A")) {
+                try {
+                    Date date = sdf.parse(data.getTimestamp());
+                    temperatureSeries.addOrUpdate(new Second(date), data.getTemperature());
+                    windSpeedSeries.addOrUpdate(new Second(date), data.getWindSpeed());
+                    humiditySeries.addOrUpdate(new Second(date), data.getHumidity());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(temperatureSeries);
+        dataset.addSeries(windSpeedSeries);
+        dataset.addSeries(humiditySeries);
+
+        return dataset;
+    }
+
+    private void updateChart(List<WeatherData> weatherDataList) {
+        XYDataset dataset = createDataset(weatherDataList);
+
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(
                 "Weather Data",
                 "Time",
                 "Value",
                 dataset,
-                PlotOrientation.VERTICAL,
                 true, true, false);
 
         chart.setBackgroundPaint(Color.white);
@@ -236,21 +297,21 @@ public class WeatherApp extends JFrame {
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-        ValueAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setVerticalTickLabels(true);
+        DateAxis domainAxis = new DateAxis("Time");
+        domainAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd HH:mm"));
+        plot.setDomainAxis(domainAxis);
 
         chartPanel.setChart(chart);
     }
 
     private void updateForecastChart(List<WeatherData> weatherDataList) {
-        XYSeriesCollection dataset = createForecastDataset(weatherDataList);
+        XYDataset dataset = createForecastDataset(weatherDataList);
 
-        JFreeChart chart = ChartFactory.createXYLineChart(
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(
                 "Weather Forecast",
                 "Time",
                 "Value",
                 dataset,
-                PlotOrientation.VERTICAL,
                 true, true, false);
 
         chart.setBackgroundPaint(Color.white);
@@ -269,56 +330,11 @@ public class WeatherApp extends JFrame {
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-        ValueAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setVerticalTickLabels(true);
+        DateAxis domainAxis = new DateAxis("Time");
+        domainAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd HH:mm"));
+        plot.setDomainAxis(domainAxis);
 
         forecastChartPanel.setChart(chart);
-    }
-
-    private XYSeriesCollection createDataset(List<WeatherData> weatherDataList) {
-        XYSeries temperatureSeries = new XYSeries("Temperature");
-        XYSeries windSpeedSeries = new XYSeries("Wind Speed");
-        XYSeries humiditySeries = new XYSeries("Humidity");
-
-        int index = 0;
-        for (WeatherData data : weatherDataList) {
-            if (data.getTimestamp() != null) {
-                temperatureSeries.add(index, data.getTemperature());
-                windSpeedSeries.add(index, data.getWindSpeed());
-                humiditySeries.add(index, data.getHumidity());
-                index++;
-            }
-        }
-
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(temperatureSeries);
-        dataset.addSeries(windSpeedSeries);
-        dataset.addSeries(humiditySeries);
-
-        return dataset;
-    }
-
-    private XYSeriesCollection createForecastDataset(List<WeatherData> weatherDataList) {
-        XYSeries temperatureSeries = new XYSeries("Temperature");
-        XYSeries windSpeedSeries = new XYSeries("Wind Speed");
-        XYSeries humiditySeries = new XYSeries("Humidity");
-
-        int index = 0;
-        for (WeatherData data : weatherDataList) {
-            if (data.getTimestamp() != null) {
-                temperatureSeries.add(index, data.getTemperature());
-                windSpeedSeries.add(index, data.getWindSpeed());
-                humiditySeries.add(index, data.getHumidity());
-                index++;
-            }
-        }
-
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(temperatureSeries);
-        dataset.addSeries(windSpeedSeries);
-        dataset.addSeries(humiditySeries);
-
-        return dataset;
     }
 
     private void updateSummary(List<WeatherData> weatherDataList) {
