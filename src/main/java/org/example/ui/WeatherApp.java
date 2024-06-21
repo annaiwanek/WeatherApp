@@ -11,7 +11,6 @@ import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.DefaultTileFactory;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.TileFactoryInfo;
-import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -396,19 +395,20 @@ public class WeatherApp extends JFrame {
         mapViewer.setZoom(6);
 
         // Add a waypoint for the weather data
-        // In a real-world application, you would create a custom waypoint renderer to display the weather data
-        Set<Waypoint> waypoints = new HashSet<>();
+        Set<WeatherWaypoint> waypoints = new HashSet<>();
         waypoints.add(new WeatherWaypoint(weatherData, geoPosition));
 
-        WaypointPainter<Waypoint> waypointPainter = new WaypointPainter<>();
+        WaypointPainter<WeatherWaypoint> waypointPainter = new WaypointPainter<>();
         waypointPainter.setWaypoints(waypoints);
+        waypointPainter.setRenderer(new WeatherWaypointRenderer());
         mapViewer.setOverlayPainter(waypointPainter);
 
         logger.info("Map updated with new location and waypoint");
     }
 
     private GeoPosition fetchCoordinates(String location) throws Exception {
-        String urlString = String.format(GEO_API_URL, location, "22235b26b7ac6a135126512bf6a8d8e9");
+        String apiKey = "22235b26b7ac6a135126512bf6a8d8e9"; // Replace "YOUR_API_KEY" with your actual API key
+        String urlString = String.format(GEO_API_URL, location, apiKey);
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
