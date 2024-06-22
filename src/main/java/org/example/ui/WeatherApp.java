@@ -17,6 +17,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.DateTickUnit;
 import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.plot.XYPlot;
@@ -176,8 +177,9 @@ public class WeatherApp extends JFrame {
         forecastChartPanel = new ChartPanel(null);
         forecastChartPanel.setPreferredSize(new Dimension(600, 400));
 
+        // Add padding between chart panels
         JPanel chartContainerPanel = new JPanel();
-        chartContainerPanel.setLayout(new GridLayout(2, 1));
+        chartContainerPanel.setLayout(new GridLayout(2, 1, 0, 20)); // 20 pixels of vertical padding
         chartContainerPanel.add(chartPanel);
         chartContainerPanel.add(forecastChartPanel);
 
@@ -235,11 +237,11 @@ public class WeatherApp extends JFrame {
         for (WeatherWaypoint waypoint : waypoints) {
             Point2D waypointPoint = mapViewer.getTileFactory().geoToPixel(waypoint.getPosition(), mapViewer.getZoom());
             if (waypointPoint.distance(mousePoint) < 20) { // 20 pixels threshold
-                String tooltipText = String.format("<html><b>%s</b><br/>Temp: %.2f°C<br/>Wind: %.2f m/s<br/>Humidity: %.2f%%</html>",
+                String tooltipText = String.format("<html><b>%s</b><br/>Temp: %.2f°C<br/>Wind: %.2f m/s<br/>Humidity: %.1f%%</html>",
                         waypoint.getWeatherData().getDescription(),
-                        waypoint.getWeatherData().getTemperature(),
+                        roundToHalf(waypoint.getWeatherData().getTemperature()),
                         waypoint.getWeatherData().getWindSpeed(),
-                        waypoint.getWeatherData().getHumidity());
+                        roundToOneDecimalPlace(waypoint.getWeatherData().getHumidity()));
                 mapViewer.setToolTipText(tooltipText);
                 ToolTipManager.sharedInstance().mouseMoved(new MouseEvent(mapViewer, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, e.getX(), e.getY(), e.getClickCount(), e.isPopupTrigger()));
                 return;
@@ -294,7 +296,7 @@ public class WeatherApp extends JFrame {
 
     private void updateUI(WeatherData data) {
         locationLabel.setText("Location: " + data.getLocation());
-        temperatureLabel.setText("Temperature: " + data.getTemperature() + " " + (isMetric ? "°C" : "°F"));
+        temperatureLabel.setText("Temperature: " + roundToHalf(data.getTemperature()) + " " + (isMetric ? "°C" : "°F"));
         descriptionLabel.setText("Description: " + data.getDescription());
 
         String iconUrl = "http://openweathermap.org/img/wn/" + data.getIcon() + "@2x.png";
@@ -329,9 +331,9 @@ public class WeatherApp extends JFrame {
             if (data.getTimestamp() != null && !data.getTimestamp().equals("N/A")) {
                 try {
                     Date date = sdf.parse(data.getTimestamp());
-                    temperatureSeries.addOrUpdate(new Minute(date), data.getTemperature());
+                    temperatureSeries.addOrUpdate(new Minute(date), roundToHalf(data.getTemperature()));
                     windSpeedSeries.addOrUpdate(new Minute(date), data.getWindSpeed());
-                    humiditySeries.addOrUpdate(new Minute(date), data.getHumidity());
+                    humiditySeries.addOrUpdate(new Minute(date), roundToOneDecimalPlace(data.getHumidity()));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -356,9 +358,9 @@ public class WeatherApp extends JFrame {
             if (data.getTimestamp() != null && !data.getTimestamp().equals("N/A")) {
                 try {
                     Date date = sdf.parse(data.getTimestamp());
-                    temperatureSeries.addOrUpdate(new Minute(date), data.getTemperature());
+                    temperatureSeries.addOrUpdate(new Minute(date), roundToHalf(data.getTemperature()));
                     windSpeedSeries.addOrUpdate(new Minute(date), data.getWindSpeed());
-                    humiditySeries.addOrUpdate(new Minute(date), data.getHumidity());
+                    humiditySeries.addOrUpdate(new Minute(date), roundToOneDecimalPlace(data.getHumidity()));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -410,6 +412,8 @@ public class WeatherApp extends JFrame {
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         rangeAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
+        rangeAxis.setRange(0, 100);  // Set range from 0 to 100
+        rangeAxis.setTickUnit(new NumberTickUnit(10));  // Set tick unit to 10
 
         DateAxis domainAxis = new DateAxis("Time");
         domainAxis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
@@ -472,6 +476,8 @@ public class WeatherApp extends JFrame {
         NumberAxis forecastRangeAxis = (NumberAxis) forecastPlot.getRangeAxis();
         forecastRangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         forecastRangeAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
+        forecastRangeAxis.setRange(0, 100);  // Set range from 0 to 100
+        forecastRangeAxis.setTickUnit(new NumberTickUnit(10));  // Set tick unit to 10
 
         DateAxis forecastDomainAxis = new DateAxis("Date");
         forecastDomainAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
@@ -546,13 +552,21 @@ public class WeatherApp extends JFrame {
 
         double avgHumidity = totalHumidity / weatherDataList.size();
 
-        maxTempLabel.setText("Max Temperature: " + maxTemp + " " + (isMetric ? "°C" : "°F"));
-        minTempLabel.setText("Min Temperature: " + minTemp + " " + (isMetric ? "°C" : "°F"));
-        avgHumidityLabel.setText("Average Humidity: " + avgHumidity + " %");
+        maxTempLabel.setText("Max Temperature: " + roundToHalf(maxTemp) + " " + (isMetric ? "°C" : "°F"));
+        minTempLabel.setText("Min Temperature: " + roundToHalf(minTemp) + " " + (isMetric ? "°C" : "°F"));
+        avgHumidityLabel.setText("Average Humidity: " + roundToOneDecimalPlace(avgHumidity) + " %");
     }
 
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private double roundToHalf(double value) {
+        return Math.round(value * 2) / 2.0;
+    }
+
+    private double roundToOneDecimalPlace(double value) {
+        return Math.round(value * 10) / 10.0;
     }
 
     public static void main(String[] args) {

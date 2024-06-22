@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="praca nad osiami czasu">
+    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="stylizacja wykresow">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherWaypoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherWaypoint.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,21 +38,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.WatherApp.executor&quot;: &quot;Run&quot;,
-    &quot;Application.WeatherApp.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/.jdks/javafx-sdk-22.0.1&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Application.WatherApp.executor": "Run",
+    "Application.WeatherApp.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/User/.jdks/javafx-sdk-22.0.1",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="org.example.ui" />
@@ -173,7 +173,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719075971860</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="stylizacja wykresow">
+      <option name="closed" value="true" />
+      <created>1719078275699</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1719078275699</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -187,6 +195,7 @@
     <MESSAGE value="praca nad mapką pogodową" />
     <MESSAGE value="praca nad mapką pogodową - ikona + dymek z informacjami pogodowymi" />
     <MESSAGE value="praca nad osiami czasu" />
-    <option name="LAST_COMMIT_MESSAGE" value="praca nad osiami czasu" />
+    <MESSAGE value="stylizacja wykresow" />
+    <option name="LAST_COMMIT_MESSAGE" value="stylizacja wykresow" />
   </component>
 </project>
