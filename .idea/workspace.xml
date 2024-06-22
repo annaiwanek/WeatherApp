@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="praca nad mapką pogodową - ikona + dymek z informacjami pogodowymi">
+    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="praca nad osiami czasu">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherWaypoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherWaypoint.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,7 +165,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718994874235</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="praca nad osiami czasu">
+      <option name="closed" value="true" />
+      <created>1719075971860</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1719075971860</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -177,6 +186,7 @@
     <MESSAGE value="dodanie mapki" />
     <MESSAGE value="praca nad mapką pogodową" />
     <MESSAGE value="praca nad mapką pogodową - ikona + dymek z informacjami pogodowymi" />
-    <option name="LAST_COMMIT_MESSAGE" value="praca nad mapką pogodową - ikona + dymek z informacjami pogodowymi" />
+    <MESSAGE value="praca nad osiami czasu" />
+    <option name="LAST_COMMIT_MESSAGE" value="praca nad osiami czasu" />
   </component>
 </project>

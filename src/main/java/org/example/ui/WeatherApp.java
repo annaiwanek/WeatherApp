@@ -7,8 +7,6 @@ import org.example.db.WeatherDataDAO;
 import org.example.model.WeatherData;
 import org.example.service.OpenWeatherMapService;
 import org.example.service.WeatherProvider;
-import org.example.ui.WeatherWaypoint;
-import org.example.ui.WeatherWaypointRenderer;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.input.*;
 import org.jxmapviewer.painter.CompoundPainter;
@@ -23,6 +21,9 @@ import org.jfree.chart.axis.DateTickUnit;
 import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.ui.HorizontalAlignment;
+import org.jfree.chart.ui.VerticalAlignment;
 import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -71,6 +72,12 @@ public class WeatherApp extends JFrame {
         // Set FlatLaf look and feel
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());
+            UIManager.put("TextComponent.arc", 5);
+            UIManager.put("Component.arc", 5);
+            UIManager.put("Button.arc", 5);
+            UIManager.put("TabbedPane.showContentSeparator", true);
+            UIManager.put("ScrollBar.trackArc", 999);
+            UIManager.put("ScrollBar.thumbArc", 999);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -370,23 +377,31 @@ public class WeatherApp extends JFrame {
         XYDataset dataset = createDataset(weatherDataList);
 
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                "Weather Data",
+                "Current Weather",
                 "Time",
                 "Value",
                 dataset,
                 true, true, false);
 
         chart.setBackgroundPaint(Color.white);
+        chart.getTitle().setFont(new Font("Arial", Font.BOLD, 18));
+
+        // Dodanie stylizacji tytułu wykresu
+        TextTitle chartTitle = chart.getTitle();
+        chartTitle.setFont(new Font("SansSerif", Font.BOLD, 20));
+        chartTitle.setPaint(new Color(31, 121, 170));
+        chartTitle.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        chartTitle.setVerticalAlignment(VerticalAlignment.BOTTOM);
 
         XYPlot plot = (XYPlot) chart.getPlot();
-        plot.setBackgroundPaint(Color.lightGray);
+        plot.setBackgroundPaint(new Color(230, 230, 250));  // Light lavender
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        renderer.setSeriesPaint(0, Color.RED); // Temperature
-        renderer.setSeriesPaint(1, Color.BLUE); // Wind Speed
-        renderer.setSeriesPaint(2, Color.GREEN); // Humidity
+        renderer.setSeriesPaint(0, new Color(70, 130, 180)); // SteelBlue for Temperature
+        renderer.setSeriesPaint(1, new Color(34, 139, 34)); // ForestGreen for Wind Speed
+        renderer.setSeriesPaint(2, new Color(255, 140, 0)); // DarkOrange for Humidity
         renderer.setSeriesLinesVisible(0, true);
         renderer.setSeriesLinesVisible(1, true);
         renderer.setSeriesLinesVisible(2, true);
@@ -394,10 +409,12 @@ public class WeatherApp extends JFrame {
 
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        rangeAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
 
         DateAxis domainAxis = new DateAxis("Time");
         domainAxis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
         domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.HOUR, 2)); // Wyświetlanie co godzinę
+        domainAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
 
         // Ustawienie minimalnej daty na osi czasu na następną pełną godzinę
         Calendar calendar = Calendar.getInstance();
@@ -429,16 +446,24 @@ public class WeatherApp extends JFrame {
                 true, true, false);
 
         forecastChart.setBackgroundPaint(Color.white);
+        forecastChart.getTitle().setFont(new Font("Arial", Font.BOLD, 18));
+
+        // Dodanie stylizacji tytułu wykresu
+        TextTitle forecastChartTitle = forecastChart.getTitle();
+        forecastChartTitle.setFont(new Font("SansSerif", Font.BOLD, 20));
+        forecastChartTitle.setPaint(new Color(31, 121, 170));
+        forecastChartTitle.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        forecastChartTitle.setVerticalAlignment(VerticalAlignment.BOTTOM);
 
         XYPlot forecastPlot = (XYPlot) forecastChart.getPlot();
-        forecastPlot.setBackgroundPaint(Color.lightGray);
+        forecastPlot.setBackgroundPaint(new Color(245, 245, 220));  // Beige
         forecastPlot.setDomainGridlinePaint(Color.white);
         forecastPlot.setRangeGridlinePaint(Color.white);
 
         XYLineAndShapeRenderer forecastRenderer = new XYLineAndShapeRenderer();
-        forecastRenderer.setSeriesPaint(0, Color.MAGENTA); // Temperature in forecast
-        forecastRenderer.setSeriesPaint(1, Color.CYAN); // Wind Speed in forecast
-        forecastRenderer.setSeriesPaint(2, Color.ORANGE); // Humidity in forecast
+        forecastRenderer.setSeriesPaint(0, new Color(70, 130, 180)); // SteelBlue for Temperature
+        forecastRenderer.setSeriesPaint(1, new Color(34, 139, 34)); // ForestGreen for Wind Speed
+        forecastRenderer.setSeriesPaint(2, new Color(255, 140, 0)); // DarkOrange for Humidity
         forecastRenderer.setSeriesStroke(0, new BasicStroke(2.0f));
         forecastRenderer.setSeriesStroke(1, new BasicStroke(2.0f));
         forecastRenderer.setSeriesStroke(2, new BasicStroke(2.0f));
@@ -446,9 +471,11 @@ public class WeatherApp extends JFrame {
 
         NumberAxis forecastRangeAxis = (NumberAxis) forecastPlot.getRangeAxis();
         forecastRangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        forecastRangeAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
 
         DateAxis forecastDomainAxis = new DateAxis("Date");
         forecastDomainAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
+        forecastDomainAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
         forecastPlot.setDomainAxis(forecastDomainAxis);
 
         forecastChartPanel.setChart(forecastChart);

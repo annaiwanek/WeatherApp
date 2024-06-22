@@ -22,4 +22,3 @@ public class WeatherWaypoint implements Waypoint {
         return position;
     }
 }
-
