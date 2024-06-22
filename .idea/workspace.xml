@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="stylizacja wykresow">
+    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="poprawa wyswietlania jednostek">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
     </list>
@@ -181,7 +181,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719078275699</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="poprawa wyswietlania jednostek">
+      <option name="closed" value="true" />
+      <created>1719081276305</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1719081276305</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -196,6 +204,7 @@
     <MESSAGE value="praca nad mapką pogodową - ikona + dymek z informacjami pogodowymi" />
     <MESSAGE value="praca nad osiami czasu" />
     <MESSAGE value="stylizacja wykresow" />
-    <option name="LAST_COMMIT_MESSAGE" value="stylizacja wykresow" />
+    <MESSAGE value="poprawa wyswietlania jednostek" />
+    <option name="LAST_COMMIT_MESSAGE" value="poprawa wyswietlania jednostek" />
   </component>
 </project>

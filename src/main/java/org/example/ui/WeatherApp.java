@@ -67,6 +67,8 @@ public class WeatherApp extends JFrame {
 
     private static final String GEO_API_URL = "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s";
 
+    private WeatherData currentWeatherData;
+
     public WeatherApp() {
         logger.info("Starting Weather app...");
 
@@ -254,11 +256,11 @@ public class WeatherApp extends JFrame {
         new Thread(() -> {
             try {
                 WeatherProvider weatherProvider = new OpenWeatherMapService(isMetric);
-                WeatherData currentWeather = weatherProvider.getCurrentWeather(location);
+                currentWeatherData = weatherProvider.getCurrentWeather(location);
                 List<WeatherData> hourlyWeather = weatherProvider.getWeather(location);
 
                 weatherDataDAO.clearWeatherData(); // Clear existing data
-                weatherDataDAO.saveWeatherData(currentWeather);
+                weatherDataDAO.saveWeatherData(currentWeatherData);
                 for (WeatherData weatherData : hourlyWeather) {
                     weatherDataDAO.saveWeatherData(weatherData);
                 }
@@ -266,11 +268,11 @@ public class WeatherApp extends JFrame {
                 GeoPosition geoPosition = fetchCoordinates(location);
 
                 SwingUtilities.invokeLater(() -> {
-                    updateUI(currentWeather);
+                    updateUI(currentWeatherData);
                     updateChart(weatherDataDAO.getAllWeatherData());
                     updateForecastChart(hourlyWeather);
-                    updateSummary(weatherDataDAO.getAllWeatherData());
-                    updateMap(geoPosition, currentWeather);
+                    updateSummary(currentWeatherData, hourlyWeather);
+                    updateMap(geoPosition, currentWeatherData);
                 });
             } catch (Exception e) {
                 SwingUtilities.invokeLater(() -> showError(e.getMessage()));
@@ -535,22 +537,21 @@ public class WeatherApp extends JFrame {
         }
     }
 
-    private void updateSummary(List<WeatherData> weatherDataList) {
-        double maxTemp = Double.MIN_VALUE;
-        double minTemp = Double.MAX_VALUE;
-        double totalHumidity = 0;
+    private void updateSummary(WeatherData currentWeather, List<WeatherData> hourlyWeather) {
+        double maxTemp = currentWeather.getTemperature();
+        double minTemp = currentWeather.getTemperature();
+        double totalHumidity = currentWeather.getHumidity();
 
-        for (WeatherData data : weatherDataList) {
+        for (WeatherData data : hourlyWeather) {
             if (data.getTemperature() > maxTemp) {
                 maxTemp = data.getTemperature();
             }
             if (data.getTemperature() < minTemp) {
                 minTemp = data.getTemperature();
             }
-            totalHumidity += data.getHumidity();
         }
 
-        double avgHumidity = totalHumidity / weatherDataList.size();
+        double avgHumidity = totalHumidity;
 
         maxTempLabel.setText("Max Temperature: " + roundToHalf(maxTemp) + " " + (isMetric ? "°C" : "°F"));
         minTempLabel.setText("Min Temperature: " + roundToHalf(minTemp) + " " + (isMetric ? "°C" : "°F"));
