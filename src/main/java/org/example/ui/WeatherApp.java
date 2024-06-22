@@ -64,6 +64,7 @@ public class WeatherApp extends JFrame {
     private String currentLocation = "";
     private JXMapViewer mapViewer;
     private Set<WeatherWaypoint> waypoints = new HashSet<>();
+    private JButton getWeatherButton;
 
     private static final String GEO_API_URL = "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s";
 
@@ -93,21 +94,33 @@ public class WeatherApp extends JFrame {
         // Initialize DAO
         weatherDataDAO = new WeatherDataDAO();
 
-        JPanel topPanel = new JPanel();
+        GradientPanel topPanel = new GradientPanel();
         topPanel.setLayout(new BorderLayout());
 
         JPanel inputPanel = new JPanel();
+        inputPanel.setOpaque(false); // Set transparent background
         inputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         JLabel locationInputLabel = new JLabel("Enter location:");
+        locationInputLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
         locationField = new JTextField(15);
+        locationField.setFont(new Font("SansSerif", Font.PLAIN, 14));
         inputPanel.add(locationInputLabel);
         inputPanel.add(locationField);
 
-        JButton getWeatherButton = new JButton("Get Weather");
+        getWeatherButton = new JButton("Get Weather");
         getWeatherButton.setBackground(new Color(70, 130, 180));
         getWeatherButton.setForeground(Color.WHITE);
         getWeatherButton.setFocusPainted(false);
+        getWeatherButton.setFont(new Font("SansSerif", Font.PLAIN, 14));
         inputPanel.add(getWeatherButton);
+
+        // Add action listener to locationField for Enter key
+        locationField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getWeatherButton.doClick();
+            }
+        });
 
         getWeatherButton.addActionListener(new ActionListener() {
             @Override
@@ -119,9 +132,12 @@ public class WeatherApp extends JFrame {
         });
 
         JPanel unitsPanel = new JPanel();
+        unitsPanel.setOpaque(false); // Set transparent background
         unitsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         JLabel unitsInputLabel = new JLabel("Select units:");
+        unitsInputLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
         unitsComboBox = new JComboBox<>(new String[]{"Metric", "Imperial"});
+        unitsComboBox.setFont(new Font("SansSerif", Font.PLAIN, 14));
         unitsPanel.add(unitsInputLabel);
         unitsPanel.add(unitsComboBox);
 
@@ -140,32 +156,40 @@ public class WeatherApp extends JFrame {
         topPanel.add(unitsPanel, BorderLayout.EAST);
 
         JPanel weatherInfoPanel = new JPanel();
+        weatherInfoPanel.setOpaque(false); // Set transparent background
         weatherInfoPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.gridx = 0;
         gbc.gridy = 0;
         locationLabel = new JLabel("Location: ");
+        locationLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         weatherInfoPanel.add(locationLabel, gbc);
         gbc.gridx++;
         temperatureLabel = new JLabel("Temperature: ");
+        temperatureLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         weatherInfoPanel.add(temperatureLabel, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
         descriptionLabel = new JLabel("Description: ");
+        descriptionLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         weatherInfoPanel.add(descriptionLabel, gbc);
         gbc.gridx++;
         iconLabel = new JLabel();
+        iconLabel.setPreferredSize(new Dimension(100, 100)); // Adjust the size of the weather icon
         weatherInfoPanel.add(iconLabel, gbc);
 
         topPanel.add(weatherInfoPanel, BorderLayout.SOUTH);
         add(topPanel, BorderLayout.NORTH);
 
-        JPanel summaryPanel = new JPanel();
+        GradientPanel summaryPanel = new GradientPanel(new Color(135, 206, 235), new Color(255, 255, 255));
         summaryPanel.setLayout(new GridLayout(1, 3));
         maxTempLabel = new JLabel("Max Temperature: ");
+        maxTempLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
         minTempLabel = new JLabel("Min Temperature: ");
+        minTempLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
         avgHumidityLabel = new JLabel("Average Humidity: ");
+        avgHumidityLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
 
         summaryPanel.add(maxTempLabel);
         summaryPanel.add(minTempLabel);
@@ -180,8 +204,8 @@ public class WeatherApp extends JFrame {
         forecastChartPanel.setPreferredSize(new Dimension(600, 400));
 
         // Add padding between chart panels
-        JPanel chartContainerPanel = new JPanel();
-        chartContainerPanel.setLayout(new GridLayout(2, 1, 0, 20)); // 20 pixels of vertical padding
+        GradientPanel chartContainerPanel = new GradientPanel(new Color(135, 206, 235), new Color(255, 255, 255)); // Matching the gradient color
+        chartContainerPanel.setLayout(new GridLayout(2, 1, 0, 10)); // Thinner separator
         chartContainerPanel.add(chartPanel);
         chartContainerPanel.add(forecastChartPanel);
 
@@ -239,9 +263,10 @@ public class WeatherApp extends JFrame {
         for (WeatherWaypoint waypoint : waypoints) {
             Point2D waypointPoint = mapViewer.getTileFactory().geoToPixel(waypoint.getPosition(), mapViewer.getZoom());
             if (waypointPoint.distance(mousePoint) < 20) { // 20 pixels threshold
-                String tooltipText = String.format("<html><b>%s</b><br/>Temp: %.2f°C<br/>Wind: %.2f m/s<br/>Humidity: %.1f%%</html>",
+                String tooltipText = String.format("<html><b>%s</b><br/>Temp: %.1f %s<br/>Wind: %.2f m/s<br/>Humidity: %.1f%%</html>",
                         waypoint.getWeatherData().getDescription(),
                         roundToHalf(waypoint.getWeatherData().getTemperature()),
+                        isMetric ? "°C" : "°F",
                         waypoint.getWeatherData().getWindSpeed(),
                         roundToOneDecimalPlace(waypoint.getWeatherData().getHumidity()));
                 mapViewer.setToolTipText(tooltipText);
@@ -306,7 +331,7 @@ public class WeatherApp extends JFrame {
 
         try {
             URL url = new URL(iconUrl);
-            ImageIcon icon = new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+            ImageIcon icon = new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)); // Adjusted size
             if (icon.getImageLoadStatus() == MediaTracker.COMPLETE) {
                 iconLabel.setIcon(icon);
                 logger.info("Icon loaded successfully from URL: " + iconUrl);
@@ -398,7 +423,7 @@ public class WeatherApp extends JFrame {
         chartTitle.setVerticalAlignment(VerticalAlignment.BOTTOM);
 
         XYPlot plot = (XYPlot) chart.getPlot();
-        plot.setBackgroundPaint(new Color(230, 230, 250));  // Light lavender
+        plot.setBackgroundPaint(new GradientPaint(0, 0, new Color(135, 206, 235), 0, getHeight(), new Color(255, 255, 255)));  // Gradient background
         plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
 
@@ -462,7 +487,7 @@ public class WeatherApp extends JFrame {
         forecastChartTitle.setVerticalAlignment(VerticalAlignment.BOTTOM);
 
         XYPlot forecastPlot = (XYPlot) forecastChart.getPlot();
-        forecastPlot.setBackgroundPaint(new Color(245, 245, 220));  // Beige
+        forecastPlot.setBackgroundPaint(new GradientPaint(0, 0, new Color(135, 206, 235), 0, getHeight(), new Color(255, 255, 255)));  // Gradient background
         forecastPlot.setDomainGridlinePaint(Color.white);
         forecastPlot.setRangeGridlinePaint(Color.white);
 
@@ -499,7 +524,7 @@ public class WeatherApp extends JFrame {
 
         WaypointPainter<WeatherWaypoint> waypointPainter = new WaypointPainter<>();
         waypointPainter.setWaypoints(waypoints);
-        waypointPainter.setRenderer(new WeatherWaypointRenderer());
+        waypointPainter.setRenderer(new WeatherWaypointRenderer(isMetric));
 
         List<Painter<JXMapViewer>> painters = new java.util.ArrayList<>();
         painters.add(waypointPainter);
@@ -570,10 +595,70 @@ public class WeatherApp extends JFrame {
         return Math.round(value * 10) / 10.0;
     }
 
+    // Getters for testing
+    public JTextField getLocationField() {
+        return locationField;
+    }
+
+    public JButton getGetWeatherButton() {
+        return getWeatherButton;
+    }
+
+    public JComboBox<String> getUnitsComboBox() {
+        return unitsComboBox;
+    }
+
+    public JLabel getLocationLabel() {
+        return locationLabel;
+    }
+
+    public JLabel getTemperatureLabel() {
+        return temperatureLabel;
+    }
+
+    public JLabel getDescriptionLabel() {
+        return descriptionLabel;
+    }
+
+    public JLabel getIconLabel() {
+        return iconLabel;
+    }
+
+    public String getCurrentLocation() {
+        return currentLocation;
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             WeatherApp app = new WeatherApp();
             app.setVisible(true);
         });
     }
+
+    // Klasa GradientPanel, która maluje gradient na swoim tle
+    class GradientPanel extends JPanel {
+        private final Color color1;
+        private final Color color2;
+
+        public GradientPanel(Color color1, Color color2) {
+            this.color1 = color1;
+            this.color2 = color2;
+        }
+
+        public GradientPanel() {
+            this(new Color(70, 130, 180), new Color(255, 255, 255)); // Default gradient
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            int width = getWidth();
+            int height = getHeight();
+            GradientPaint gp = new GradientPaint(0, 0, color1, 0, height, color2);
+            g2d.setPaint(gp);
+            g2d.fillRect(0, 0, width, height);
+        }
+    }
+
 }

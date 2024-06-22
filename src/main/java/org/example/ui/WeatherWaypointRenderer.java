@@ -12,6 +12,11 @@ import java.net.URL;
 public class WeatherWaypointRenderer implements WaypointRenderer<WeatherWaypoint> {
 
     private final Font font = new Font("Arial", Font.PLAIN, 12);
+    private final boolean isMetric;
+
+    public WeatherWaypointRenderer(boolean isMetric) {
+        this.isMetric = isMetric;
+    }
 
     @Override
     public void paintWaypoint(Graphics2D g, JXMapViewer map, WeatherWaypoint waypoint) {
@@ -19,7 +24,7 @@ public class WeatherWaypointRenderer implements WaypointRenderer<WeatherWaypoint
         Point drawPoint = new Point((int) point.getX(), (int) point.getY());
 
         String description = waypoint.getWeatherData().getDescription();
-        String temperature = "Temp: " + waypoint.getWeatherData().getTemperature() + "°C";
+        String temperature = "Temp: " + roundToHalf(waypoint.getWeatherData().getTemperature()) + (isMetric ? "°C" : "°F");
         String windSpeed = "Wind: " + waypoint.getWeatherData().getWindSpeed() + " m/s";
         String humidity = "Humidity: " + waypoint.getWeatherData().getHumidity() + "%";
 
@@ -52,5 +57,9 @@ public class WeatherWaypointRenderer implements WaypointRenderer<WeatherWaypoint
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private double roundToHalf(double value) {
+        return Math.round(value * 2) / 2.0;
     }
 }
