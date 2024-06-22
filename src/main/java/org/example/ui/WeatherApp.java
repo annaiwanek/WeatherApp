@@ -17,9 +17,12 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.DateTickUnit;
+import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.time.Second;
+import org.jfree.data.time.Minute;
+import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
@@ -36,10 +39,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 public class WeatherApp extends JFrame {
     private static final Logger logger = LogManager.getLogger(WeatherApp.class);
@@ -245,6 +246,8 @@ public class WeatherApp extends JFrame {
                 WeatherProvider weatherProvider = new OpenWeatherMapService(isMetric);
                 WeatherData currentWeather = weatherProvider.getCurrentWeather(location);
                 List<WeatherData> hourlyWeather = weatherProvider.getWeather(location);
+                List<WeatherData> currentDayWeather = filterCurrentDayData(hourlyWeather);
+                List<WeatherData> forecastWeather = filterForecastData(hourlyWeather);
 
                 weatherDataDAO.clearWeatherData(); // Clear existing data
                 weatherDataDAO.saveWeatherData(currentWeather);
@@ -256,8 +259,8 @@ public class WeatherApp extends JFrame {
 
                 SwingUtilities.invokeLater(() -> {
                     updateUI(currentWeather);
-                    updateChart(weatherDataDAO.getAllWeatherData());
-                    updateForecastChart(hourlyWeather);
+                    updateChart(currentDayWeather);
+                    updateForecastChart(forecastWeather);
                     updateSummary(weatherDataDAO.getAllWeatherData());
                     updateMap(geoPosition, currentWeather);
                 });
@@ -265,6 +268,78 @@ public class WeatherApp extends JFrame {
                 SwingUtilities.invokeLater(() -> showError(e.getMessage()));
             }
         }).start();
+    }
+
+    private List<WeatherData> filterCurrentDayData(List<WeatherData> weatherDataList) {
+        List<WeatherData> filteredCurrentDay = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        // Pobierz czas bieżący zaokrąglony w dół do pełnej godziny
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.HOUR_OF_DAY, 1); // Start from the next full hour
+        Date nextHour = calendar.getTime();
+
+        for (WeatherData data : weatherDataList) {
+            try {
+                Date date = sdf.parse(data.getTimestamp());
+
+                // Sprawdź, czy czas jest między następną pełną godziną a końcem dnia
+                if (!date.before(nextHour) && date.before(ceilingDate(calendar.getTime(), Calendar.DAY_OF_MONTH))) {
+                    filteredCurrentDay.add(data);
+
+                    // Przesuń 'nextHour' do następnej godziny, aby uwzględnić tylko co godzinę
+                    calendar.setTime(nextHour);
+                    calendar.add(Calendar.HOUR_OF_DAY, 1);
+                    nextHour = calendar.getTime();
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return filteredCurrentDay;
+    }
+
+    private List<WeatherData> filterForecastData(List<WeatherData> weatherDataList) {
+        List<WeatherData> filteredForecast = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, 1); // Start from tomorrow
+        Date startDate = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_YEAR, 5); // Include the next 5 days
+        Date endDate = calendar.getTime();
+
+        for (WeatherData data : weatherDataList) {
+            try {
+                Date date = sdf.parse(data.getTimestamp());
+                if (!date.before(startDate) && date.before(endDate)) {
+                    filteredForecast.add(data);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return filteredForecast;
+    }
+
+    private Date ceilingDate(Date date, int field) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        switch (field) {
+            case Calendar.DAY_OF_MONTH:
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                break;
+            // Add other cases if needed
+        }
+        return calendar.getTime();
     }
 
     private void startRealTimeUpdates() {
@@ -320,9 +395,9 @@ public class WeatherApp extends JFrame {
             if (data.getTimestamp() != null && !data.getTimestamp().equals("N/A")) {
                 try {
                     Date date = sdf.parse(data.getTimestamp());
-                    temperatureSeries.addOrUpdate(new Second(date), data.getTemperature());
-                    windSpeedSeries.addOrUpdate(new Second(date), data.getWindSpeed());
-                    humiditySeries.addOrUpdate(new Second(date), data.getHumidity());
+                    temperatureSeries.addOrUpdate(new Minute(date), data.getTemperature());
+                    windSpeedSeries.addOrUpdate(new Minute(date), data.getWindSpeed());
+                    humiditySeries.addOrUpdate(new Minute(date), data.getHumidity());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -338,18 +413,18 @@ public class WeatherApp extends JFrame {
     }
 
     private XYDataset createForecastDataset(List<WeatherData> weatherDataList) {
-        TimeSeries temperatureSeries = new TimeSeries("Temperature");
-        TimeSeries windSpeedSeries = new TimeSeries("Wind Speed");
-        TimeSeries humiditySeries = new TimeSeries("Humidity");
+        TimeSeries forecastTemperatureSeries = new TimeSeries("Forecast Temperature");
+        TimeSeries forecastWindSpeedSeries = new TimeSeries("Forecast Wind Speed");
+        TimeSeries forecastHumiditySeries = new TimeSeries("Forecast Humidity");
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (WeatherData data : weatherDataList) {
             if (data.getTimestamp() != null && !data.getTimestamp().equals("N/A")) {
                 try {
                     Date date = sdf.parse(data.getTimestamp());
-                    temperatureSeries.addOrUpdate(new Second(date), data.getTemperature());
-                    windSpeedSeries.addOrUpdate(new Second(date), data.getWindSpeed());
-                    humiditySeries.addOrUpdate(new Second(date), data.getHumidity());
+                    forecastTemperatureSeries.addOrUpdate(new Day(date), data.getTemperature());
+                    forecastWindSpeedSeries.addOrUpdate(new Day(date), data.getWindSpeed());
+                    forecastHumiditySeries.addOrUpdate(new Day(date), data.getHumidity());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -357,9 +432,9 @@ public class WeatherApp extends JFrame {
         }
 
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(temperatureSeries);
-        dataset.addSeries(windSpeedSeries);
-        dataset.addSeries(humiditySeries);
+        dataset.addSeries(forecastTemperatureSeries);
+        dataset.addSeries(forecastWindSpeedSeries);
+        dataset.addSeries(forecastHumiditySeries);
 
         return dataset;
     }
@@ -391,43 +466,47 @@ public class WeatherApp extends JFrame {
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
         DateAxis domainAxis = new DateAxis("Time");
-        domainAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd HH:mm"));
+        domainAxis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
+        domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.MINUTE, 30)); // Wyswietlanie co 30 minut
         plot.setDomainAxis(domainAxis);
 
         chartPanel.setChart(chart);
     }
 
-    private void updateForecastChart(List<WeatherData> weatherDataList) {
-        XYDataset dataset = createForecastDataset(weatherDataList);
+    private void updateForecastChart(List<WeatherData> forecastWeatherDataList) {
+        XYDataset forecastDataset = createForecastDataset(forecastWeatherDataList);
 
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+        JFreeChart forecastChart = ChartFactory.createTimeSeriesChart(
                 "Weather Forecast",
-                "Time",
+                "Date",
                 "Value",
-                dataset,
+                forecastDataset,
                 true, true, false);
 
-        chart.setBackgroundPaint(Color.white);
+        forecastChart.setBackgroundPaint(Color.white);
 
-        XYPlot plot = (XYPlot) chart.getPlot();
-        plot.setBackgroundPaint(Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white);
-        plot.setRangeGridlinePaint(Color.white);
+        XYPlot forecastPlot = (XYPlot) forecastChart.getPlot();
+        forecastPlot.setBackgroundPaint(Color.lightGray);
+        forecastPlot.setDomainGridlinePaint(Color.white);
+        forecastPlot.setRangeGridlinePaint(Color.white);
 
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        renderer.setSeriesPaint(0, Color.RED); // Temperature
-        renderer.setSeriesPaint(1, Color.BLUE); // Wind Speed
-        renderer.setSeriesPaint(2, Color.GREEN); // Humidity
-        plot.setRenderer(renderer);
+        XYLineAndShapeRenderer forecastRenderer = new XYLineAndShapeRenderer();
+        forecastRenderer.setSeriesPaint(0, Color.MAGENTA); // Temperature in forecast
+        forecastRenderer.setSeriesPaint(1, Color.CYAN); // Wind Speed in forecast
+        forecastRenderer.setSeriesPaint(2, Color.ORANGE); // Humidity in forecast
+        forecastRenderer.setSeriesStroke(0, new BasicStroke(2.0f));
+        forecastRenderer.setSeriesStroke(1, new BasicStroke(2.0f));
+        forecastRenderer.setSeriesStroke(2, new BasicStroke(2.0f));
+        forecastPlot.setRenderer(forecastRenderer);
 
-        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        NumberAxis forecastRangeAxis = (NumberAxis) forecastPlot.getRangeAxis();
+        forecastRangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-        DateAxis domainAxis = new DateAxis("Time");
-        domainAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd HH:mm"));
-        plot.setDomainAxis(domainAxis);
+        DateAxis forecastDomainAxis = new DateAxis("Date");
+        forecastDomainAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
+        forecastPlot.setDomainAxis(forecastDomainAxis);
 
-        forecastChartPanel.setChart(chart);
+        forecastChartPanel.setChart(forecastChart);
     }
 
     private void updateMap(GeoPosition geoPosition, WeatherData weatherData) {
