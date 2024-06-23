@@ -32,10 +32,10 @@ public class WeatherWaypointRenderer implements WaypointRenderer<WeatherWaypoint
         g.setColor(Color.BLACK);
         FontMetrics fm = g.getFontMetrics();
         int maxWidth = Math.max(Math.max(fm.stringWidth(description), fm.stringWidth(temperature)), Math.max(fm.stringWidth(windSpeed), fm.stringWidth(humidity)));
-        int textHeight = fm.getHeight() * 4; // 4 lines of text
+        int textHeight = fm.getHeight() * 4;
 
-        int boxX = drawPoint.x + 30; // Shift the box further to the right
-        int boxY = drawPoint.y - textHeight - 30; // Shift the box further up
+        int boxX = drawPoint.x + 30;
+        int boxY = drawPoint.y - textHeight - 30;
 
         g.setColor(new Color(255, 255, 255, 200));
         g.fillRoundRect(boxX, boxY, maxWidth + 20, textHeight + 20, 10, 10);

@@ -1,0 +1,117 @@
+@startuml
+
+interface WeatherProvider {
+    + WeatherData getCurrentWeather(String location)
+    + List<WeatherData> getWeather(String location)
+}
+
+class WeatherDataDAO {
+    - static final String DB_URL
+    + WeatherDataDAO()
+    + void saveWeatherData(WeatherData data)
+    + List<WeatherData> getAllWeatherData()
+    + void clearWeatherData()
+}
+
+class WeatherData {
+    - String location
+    - double temperature
+    - String description
+    - String icon
+    - double windSpeed
+    - double humidity
+    - double pressure
+    - String timestamp
+    + WeatherData(String location, double temperature, String description, String icon, double windSpeed, double humidity, double pressure, String timestamp)
+    + String getLocation()
+    + double getTemperature()
+    + String getDescription()
+    + String getIcon()
+    + double getWindSpeed()
+    + double getHumidity()
+    + double getPressure()
+    + String getTimestamp()
+}
+
+class OpenWeatherMapService {
+    - Logger logger
+    - static final String API_KEY
+    - String units
+    + OpenWeatherMapService(boolean isMetric)
+    + WeatherData getCurrentWeather(String location)
+    + List<WeatherData> getWeather(String location)
+    + WeatherData parseCurrentWeatherData(String json)
+    + List<WeatherData> parseWeatherData(String json)
+}
+
+class WeatherApp {
+    - JTextField locationField
+    - JLabel locationLabel
+    - JLabel temperatureLabel
+    - JLabel descriptionLabel
+    - JLabel iconLabel
+    - WeatherDataDAO weatherDataDAO
+    - ChartPanel chartPanel
+    - ChartPanel forecastChartPanel
+    - JComboBox<String> unitsComboBox
+    - Timer timer
+    - JXMapViewer mapViewer
+    - Set<WeatherWaypoint> waypoints
+    - String currentLocation
+    - WeatherData currentWeatherData
+    + WeatherApp()
+    + void initializeMap()
+    + void handleMouseMoved(MouseEvent e)
+    + void fetchWeather(String location)
+    + void startRealTimeUpdates()
+    + void updateUI(WeatherData data)
+    + XYDataset createDataset(List<WeatherData> weatherDataList)
+    + XYDataset createForecastDataset(List<WeatherData> weatherDataList)
+    + void updateChart(List<WeatherData> weatherDataList)
+    + void updateForecastChart(List<WeatherData> forecastWeatherDataList)
+    + void updateMap(WeatherData weatherData)
+    + void fetchCoordinates(String location)
+    + void updateSummary(WeatherData currentWeather, List<WeatherData> hourlyWeather)
+    + void showError(String message)
+    + double roundToHalf(double value)
+    + double roundToOneDecimalPlace(double value)
+    + JTextField getLocationField()
+    + JButton getGetWeatherButton()
+    + JComboBox<String> getUnitsComboBox()
+    + JLabel getLocationLabel()
+    + JLabel getTemperatureLabel()
+    + JLabel getDescriptionLabel()
+    + JLabel getIconLabel()
+    + String getCurrentLocation()
+}
+
+class WeatherWaypoint {
+    - WeatherData weatherData
+    - Object position
+    + WeatherWaypoint(WeatherData weatherData, Object position)
+    + WeatherData getWeatherData()
+    + Object getPosition()
+}
+
+class WeatherWaypointRenderer {
+    - Font font
+    - boolean isMetric
+    + WeatherWaypointRenderer(boolean isMetric)
+    + void paintWaypoint(Graphics2D g, JXMapViewer map, WeatherWaypoint waypoint)
+    + double roundToHalf(double value)
+}
+
+class Main {
+    + static void main(String[] args)
+}
+
+WeatherProvider <|.. OpenWeatherMapService
+WeatherApp --> WeatherDataDAO
+WeatherApp --> WeatherWaypoint
+WeatherApp --> WeatherProvider
+WeatherApp --> WeatherData
+WeatherWaypoint --> WeatherData
+WeatherWaypointRenderer --> WeatherWaypoint
+Main --> WeatherApp
+
+@enduml

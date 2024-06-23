@@ -92,15 +92,15 @@ public class WeatherApp extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Initialize DAO
+        // Inicjalizacja DAO
         weatherDataDAO = new WeatherDataDAO();
 
         GradientPanel topPanel = new GradientPanel();
         topPanel.setLayout(new BorderLayout());
 
         JPanel inputPanel = new JPanel();
-        inputPanel.setOpaque(false); // Set transparent background
-        inputPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5)); // Zwiększ odstępy między komponentami
+        inputPanel.setOpaque(false);
+        inputPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
         JLabel locationInputLabel = new JLabel("Enter location:");
         locationInputLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
         locationField = new JTextField(15);
@@ -115,7 +115,6 @@ public class WeatherApp extends JFrame {
         getWeatherButton.setFont(new Font("SansSerif", Font.PLAIN, 14));
         inputPanel.add(getWeatherButton);
 
-        // Add action listener to locationField for Enter key
         locationField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -132,10 +131,9 @@ public class WeatherApp extends JFrame {
             }
         });
 
-        // Add the date label to the input panel with a fixed larger gap
         dateLabel = new JLabel("Date: ");
         dateLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        inputPanel.add(Box.createHorizontalStrut(40)); // Add a larger fixed gap between the button and date label
+        inputPanel.add(Box.createHorizontalStrut(80));
         inputPanel.add(dateLabel);
 
         JPanel unitsPanel = new JPanel();
@@ -154,7 +152,7 @@ public class WeatherApp extends JFrame {
                 String selectedUnit = (String) unitsComboBox.getSelectedItem();
                 isMetric = "Metric".equals(selectedUnit);
                 if (!currentLocation.isEmpty()) {
-                    fetchWeather(currentLocation); // Refetch weather data with the new units
+                    fetchWeather(currentLocation);
                 }
             }
         });
@@ -163,27 +161,27 @@ public class WeatherApp extends JFrame {
         topPanel.add(unitsPanel, BorderLayout.EAST);
 
         JPanel weatherInfoPanel = new JPanel();
-        weatherInfoPanel.setOpaque(false); // Set transparent background
+        weatherInfoPanel.setOpaque(false);
         weatherInfoPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.gridx = 0;
         gbc.gridy = 0;
         locationLabel = new JLabel("Location: ");
-        locationLabel.setFont(new Font("SansSerif", Font.BOLD, 16));  // Pogrubiona czcionka
+        locationLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         weatherInfoPanel.add(locationLabel, gbc);
         gbc.gridx++;
         temperatureLabel = new JLabel("Temperature: ");
-        temperatureLabel.setFont(new Font("SansSerif", Font.BOLD, 16));  // Pogrubiona czcionka
+        temperatureLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         weatherInfoPanel.add(temperatureLabel, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
         descriptionLabel = new JLabel("Description: ");
-        descriptionLabel.setFont(new Font("SansSerif", Font.BOLD, 16));  // Pogrubiona czcionka
+        descriptionLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         weatherInfoPanel.add(descriptionLabel, gbc);
         gbc.gridx++;
         iconLabel = new JLabel();
-        iconLabel.setPreferredSize(new Dimension(100, 100)); // Adjust the size of the weather icon
+        iconLabel.setPreferredSize(new Dimension(100, 100));
         weatherInfoPanel.add(iconLabel, gbc);
 
         topPanel.add(weatherInfoPanel, BorderLayout.SOUTH);
@@ -204,29 +202,29 @@ public class WeatherApp extends JFrame {
 
         add(summaryPanel, BorderLayout.SOUTH);
 
-        // Initialize the chart panel
+
         chartPanel = new ChartPanel(null);
         chartPanel.setPreferredSize(new Dimension(600, 400));
         forecastChartPanel = new ChartPanel(null);
         forecastChartPanel.setPreferredSize(new Dimension(600, 400));
 
-        // Add padding between chart panels
-        GradientPanel chartContainerPanel = new GradientPanel(new Color(135, 206, 235), new Color(255, 255, 255)); // Matching the gradient color
-        chartContainerPanel.setLayout(new GridLayout(2, 1, 0, 10)); // Thinner separator
+
+        GradientPanel chartContainerPanel = new GradientPanel(new Color(135, 206, 235), new Color(255, 255, 255));
+        chartContainerPanel.setLayout(new GridLayout(2, 1, 0, 10));
         chartContainerPanel.add(chartPanel);
         chartContainerPanel.add(forecastChartPanel);
 
         add(chartContainerPanel, BorderLayout.CENTER);
 
-        // Initialize the map panel
+
         initializeMap();
         JScrollPane mapScrollPane = new JScrollPane(mapViewer);
-        mapScrollPane.setPreferredSize(new Dimension(600, 400)); // Adjust the size as needed
+        mapScrollPane.setPreferredSize(new Dimension(600, 400));
         add(mapScrollPane, BorderLayout.EAST);
 
-        // Fetch default weather for Warsaw
+
         fetchWeather("Warsaw");
-        startDateUpdater();  // Start the date updater
+        startDateUpdater();
     }
 
     private void initializeMap() {
@@ -243,11 +241,11 @@ public class WeatherApp extends JFrame {
         DefaultTileFactory tileFactory = new DefaultTileFactory(info);
         mapViewer.setTileFactory(tileFactory);
         mapViewer.setZoom(4);
-        mapViewer.setAddressLocation(new GeoPosition(52.2297, 21.0122)); // Default location (Warsaw, Poland)
+        mapViewer.setAddressLocation(new GeoPosition(52.2297, 21.0122));
 
         logger.info("Map initialized and set to default location (Warsaw, Poland)");
 
-        // Add interactions
+
         PanMouseInputListener mia = new PanMouseInputListener(mapViewer);
         mapViewer.addMouseListener(mia);
         mapViewer.addMouseMotionListener(mia);
@@ -255,7 +253,7 @@ public class WeatherApp extends JFrame {
         mapViewer.addKeyListener(new PanKeyListener(mapViewer));
         mapViewer.addMouseListener(new CenterMapListener(mapViewer));
 
-        // Add mouse motion listener for tooltips
+
         mapViewer.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -270,7 +268,7 @@ public class WeatherApp extends JFrame {
 
         for (WeatherWaypoint waypoint : waypoints) {
             Point2D waypointPoint = mapViewer.getTileFactory().geoToPixel(waypoint.getPosition(), mapViewer.getZoom());
-            if (waypointPoint.distance(mousePoint) < 20) { // 20 pixels threshold
+            if (waypointPoint.distance(mousePoint) < 20) {
                 String tooltipText = String.format("<html><b>%s</b><br/>Temp: %.1f %s<br/>Wind: %.2f m/s<br/>Humidity: %.1f%%</html>",
                         waypoint.getWeatherData().getDescription(),
                         roundToHalf(waypoint.getWeatherData().getTemperature()),
@@ -318,7 +316,7 @@ public class WeatherApp extends JFrame {
             timer.stop();
         }
 
-        timer = new javax.swing.Timer(60000, new ActionListener() { // Update every minute (60000 ms)
+        timer = new javax.swing.Timer(60000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!currentLocation.isEmpty()) {
@@ -339,7 +337,7 @@ public class WeatherApp extends JFrame {
 
         try {
             URL url = new URL(iconUrl);
-            ImageIcon icon = new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)); // Adjusted size
+            ImageIcon icon = new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
             if (icon.getImageLoadStatus() == MediaTracker.COMPLETE) {
                 iconLabel.setIcon(icon);
                 logger.info("Icon loaded successfully from URL: " + iconUrl);
@@ -436,9 +434,9 @@ public class WeatherApp extends JFrame {
         plot.setRangeGridlinePaint(Color.white);
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        renderer.setSeriesPaint(0, new Color(70, 130, 180)); // SteelBlue for Temperature
-        renderer.setSeriesPaint(1, new Color(34, 139, 34)); // ForestGreen for Wind Speed
-        renderer.setSeriesPaint(2, new Color(255, 140, 0)); // DarkOrange for Humidity
+        renderer.setSeriesPaint(0, new Color(70, 130, 180));
+        renderer.setSeriesPaint(1, new Color(34, 139, 34));
+        renderer.setSeriesPaint(2, new Color(255, 140, 0));
         renderer.setSeriesLinesVisible(0, true);
         renderer.setSeriesLinesVisible(1, true);
         renderer.setSeriesLinesVisible(2, true);
@@ -447,24 +445,24 @@ public class WeatherApp extends JFrame {
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         rangeAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
-        rangeAxis.setRange(0, 100);  // Set range from 0 to 100
-        rangeAxis.setTickUnit(new NumberTickUnit(10));  // Set tick unit to 10
+        rangeAxis.setRange(0, 100);
+        rangeAxis.setTickUnit(new NumberTickUnit(10));
 
         DateAxis domainAxis = new DateAxis("Time");
         domainAxis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
-        domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.HOUR, 2)); // Wyświetlanie co godzinę
+        domainAxis.setTickUnit(new DateTickUnit(DateTickUnitType.HOUR, 2));
         domainAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
 
-        // Ustawienie minimalnej daty na osi czasu na następną pełną godzinę
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.HOUR_OF_DAY, 1); // Przeskoczenie do następnej pełnej godziny
+        calendar.add(Calendar.HOUR_OF_DAY, 1);
         Date roundedTime = calendar.getTime();
         domainAxis.setMinimumDate(roundedTime);
 
-        // Ustawienie maksymalnej daty na osi czasu na 24 godziny od minimalnej daty
+
         calendar.add(Calendar.HOUR_OF_DAY, 24);
         Date endTime = calendar.getTime();
         domainAxis.setMaximumDate(endTime);
@@ -500,9 +498,9 @@ public class WeatherApp extends JFrame {
         forecastPlot.setRangeGridlinePaint(Color.white);
 
         XYLineAndShapeRenderer forecastRenderer = new XYLineAndShapeRenderer();
-        forecastRenderer.setSeriesPaint(0, new Color(70, 130, 180)); // SteelBlue for Temperature
-        forecastRenderer.setSeriesPaint(1, new Color(34, 139, 34)); // ForestGreen for Wind Speed
-        forecastRenderer.setSeriesPaint(2, new Color(255, 140, 0)); // DarkOrange for Humidity
+        forecastRenderer.setSeriesPaint(0, new Color(70, 130, 180));
+        forecastRenderer.setSeriesPaint(1, new Color(34, 139, 34));
+        forecastRenderer.setSeriesPaint(2, new Color(255, 140, 0));
         forecastRenderer.setSeriesStroke(0, new BasicStroke(2.0f));
         forecastRenderer.setSeriesStroke(1, new BasicStroke(2.0f));
         forecastRenderer.setSeriesStroke(2, new BasicStroke(2.0f));
@@ -511,8 +509,8 @@ public class WeatherApp extends JFrame {
         NumberAxis forecastRangeAxis = (NumberAxis) forecastPlot.getRangeAxis();
         forecastRangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         forecastRangeAxis.setLabelFont(new Font("Arial", Font.PLAIN, 12));
-        forecastRangeAxis.setRange(0, 100);  // Set range from 0 to 100
-        forecastRangeAxis.setTickUnit(new NumberTickUnit(10));  // Set tick unit to 10
+        forecastRangeAxis.setRange(0, 100);
+        forecastRangeAxis.setTickUnit(new NumberTickUnit(10));
 
         DateAxis forecastDomainAxis = new DateAxis("Date");
         forecastDomainAxis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
@@ -544,7 +542,7 @@ public class WeatherApp extends JFrame {
     }
 
     private GeoPosition fetchCoordinates(String location) throws Exception {
-        String apiKey = "22235b26b7ac6a135126512bf6a8d8e9"; // Replace "YOUR_API_KEY" with your actual API key
+        String apiKey = "22235b26b7ac6a135126512bf6a8d8e9";
         String urlString = String.format(GEO_API_URL, location, apiKey);
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -643,7 +641,6 @@ public class WeatherApp extends JFrame {
         });
     }
 
-    // Klasa GradientPanel, która maluje gradient na swoim tle
     class GradientPanel extends JPanel {
         private final Color color1;
         private final Color color2;

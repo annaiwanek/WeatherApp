@@ -12,13 +12,9 @@ public class WeatherAppTest {
 
     private WeatherApp weatherApp;
 
-    @BeforeAll
-    public void setUp() {
-        SwingUtilities.invokeLater(() -> weatherApp = new WeatherApp());
-    }
-
     @Test
     public void testInitialUIComponents() {
+        WeatherApp weatherApp = new WeatherApp();
         assertNotNull(weatherApp);
         assertNotNull(weatherApp.getLocationField());
         assertNotNull(weatherApp.getGetWeatherButton());
@@ -31,10 +27,9 @@ public class WeatherAppTest {
 
     @Test
     public void testGetWeatherButtonAction() {
-        SwingUtilities.invokeLater(() -> {
-            weatherApp.getLocationField().setText("Warsaw");
-            weatherApp.getGetWeatherButton().doClick();
-            assertEquals("Warsaw", weatherApp.getCurrentLocation());
-        });
+        WeatherApp weatherApp = new WeatherApp();
+        weatherApp.getLocationField().setText("Warsaw");
+        weatherApp.getGetWeatherButton().doClick();
+        assertEquals("Warsaw", weatherApp.getCurrentLocation());
     }
 }

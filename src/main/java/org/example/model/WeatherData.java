@@ -21,7 +21,6 @@ public class WeatherData {
         this.timestamp = timestamp;
     }
 
-    // Getters
     public String getLocation() { return location; }
     public double getTemperature() { return temperature; }
     public String getDescription() { return description; }
