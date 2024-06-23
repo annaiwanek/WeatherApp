@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="poprawa wygladu interfejsu uzytkownika">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/weather.sqbpro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/OpenWeatherMapServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/WeatherAppTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/service/WeatherDataDAOTest.java" afterDir="false" />
+    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="testy jednostkowe">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherWaypointRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherWaypointRenderer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +17,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="UML Class" />
       </list>
     </option>
   </component>
@@ -49,11 +44,17 @@
     "Application.Main.executor": "Run",
     "Application.WatherApp.executor": "Run",
     "Application.WeatherApp.executor": "Run",
+    "DefaultPlantUmlFileTemplate": "UML Class",
     "JUnit.OpenWeatherMapServiceTest.testGetCurrentWeather.executor": "Run",
     "JUnit.OpenWeatherMapServiceTest.testGetWeather.executor": "Run",
     "JUnit.WeatherDataDAOTest.testClearWeatherData.executor": "Run",
     "JUnit.WeatherDataDAOTest.testSaveAndRetrieveWeatherData.executor": "Run",
     "JUnit.WeatherDataDAOTest.testSaveWeatherData.executor": "Run",
+    "JUnit.WeatherWaypointTest (1).executor": "Run",
+    "JUnit.WeatherWaypointTest.executor": "Run",
+    "JUnit.WeatherWaypointTest.testGetPosition.executor": "Run",
+    "JUnit.WeatherWaypointTest.testGetWeatherData (1).executor": "Run",
+    "JUnit.WeatherWaypointTest.testGetWeatherData.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
@@ -62,7 +63,7 @@
     "project.structure.last.edited": "SDKs",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices"
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -74,7 +75,7 @@
       <recent name="org.example.ui" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.WeatherWaypointTest.testGetPosition">
+  <component name="RunManager" selected="Application.WatherApp">
     <configuration name="WatherApp" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="org.example.ui.WeatherApp" />
       <module name="WeatherApp" />
@@ -83,7 +84,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="OpenWeatherMapServiceTest.testGetCurrentWeather" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="WeatherWaypointTest (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="WeatherApp" />
       <extension name="coverage">
         <pattern>
@@ -92,25 +93,8 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.OpenWeatherMapServiceTest" />
-      <option name="METHOD_NAME" value="testGetCurrentWeather" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="WeatherDataDAOTest.testSaveAndRetrieveWeatherData" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="WeatherApp" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.WeatherDataDAOTest" />
-      <option name="METHOD_NAME" value="testSaveAndRetrieveWeatherData" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.WeatherWaypointTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -146,6 +130,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="WeatherWaypointTest.testGetWeatherData (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="WeatherApp" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.service" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.WeatherWaypointTest" />
+      <option name="METHOD_NAME" value="testGetWeatherData" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="WeatherWaypointTest.testGetWeatherData" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="WeatherApp" />
       <extension name="coverage">
@@ -164,11 +164,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.WeatherWaypointTest.testGetWeatherData" />
+        <item itemvalue="JUnit.WeatherWaypointTest.testGetWeatherData (1)" />
+        <item itemvalue="JUnit.WeatherWaypointTest (1)" />
         <item itemvalue="JUnit.WeatherWaypointTest.testGetPosition" />
         <item itemvalue="JUnit.WeatherWaypointTest" />
-        <item itemvalue="JUnit.WeatherWaypointTest.testGetWeatherData" />
-        <item itemvalue="JUnit.WeatherDataDAOTest.testSaveAndRetrieveWeatherData" />
-        <item itemvalue="JUnit.OpenWeatherMapServiceTest.testGetCurrentWeather" />
       </list>
     </recent_temporary>
   </component>
@@ -300,7 +300,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719082408424</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="testy jednostkowe">
+      <option name="closed" value="true" />
+      <created>1719095592757</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1719095592757</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -318,6 +326,7 @@
     <MESSAGE value="poprawa wyswietlania jednostek" />
     <MESSAGE value="poprawa dodlnego paska" />
     <MESSAGE value="poprawa wygladu interfejsu uzytkownika" />
-    <option name="LAST_COMMIT_MESSAGE" value="poprawa wygladu interfejsu uzytkownika" />
+    <MESSAGE value="testy jednostkowe" />
+    <option name="LAST_COMMIT_MESSAGE" value="testy jednostkowe" />
   </component>
 </project>

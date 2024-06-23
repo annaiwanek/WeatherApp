@@ -52,6 +52,7 @@ public class WeatherApp extends JFrame {
     private JLabel temperatureLabel;
     private JLabel descriptionLabel;
     private JLabel iconLabel;
+    private JLabel dateLabel;
     private WeatherDataDAO weatherDataDAO;
     private ChartPanel chartPanel;
     private ChartPanel forecastChartPanel;
@@ -99,7 +100,7 @@ public class WeatherApp extends JFrame {
 
         JPanel inputPanel = new JPanel();
         inputPanel.setOpaque(false); // Set transparent background
-        inputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        inputPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5)); // Zwiększ odstępy między komponentami
         JLabel locationInputLabel = new JLabel("Enter location:");
         locationInputLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
         locationField = new JTextField(15);
@@ -130,6 +131,12 @@ public class WeatherApp extends JFrame {
                 startRealTimeUpdates();
             }
         });
+
+        // Add the date label to the input panel with a fixed larger gap
+        dateLabel = new JLabel("Date: ");
+        dateLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        inputPanel.add(Box.createHorizontalStrut(40)); // Add a larger fixed gap between the button and date label
+        inputPanel.add(dateLabel);
 
         JPanel unitsPanel = new JPanel();
         unitsPanel.setOpaque(false); // Set transparent background
@@ -163,16 +170,16 @@ public class WeatherApp extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         locationLabel = new JLabel("Location: ");
-        locationLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        locationLabel.setFont(new Font("SansSerif", Font.BOLD, 16));  // Pogrubiona czcionka
         weatherInfoPanel.add(locationLabel, gbc);
         gbc.gridx++;
         temperatureLabel = new JLabel("Temperature: ");
-        temperatureLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        temperatureLabel.setFont(new Font("SansSerif", Font.BOLD, 16));  // Pogrubiona czcionka
         weatherInfoPanel.add(temperatureLabel, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
         descriptionLabel = new JLabel("Description: ");
-        descriptionLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        descriptionLabel.setFont(new Font("SansSerif", Font.BOLD, 16));  // Pogrubiona czcionka
         weatherInfoPanel.add(descriptionLabel, gbc);
         gbc.gridx++;
         iconLabel = new JLabel();
@@ -219,6 +226,7 @@ public class WeatherApp extends JFrame {
 
         // Fetch default weather for Warsaw
         fetchWeather("Warsaw");
+        startDateUpdater();  // Start the date updater
     }
 
     private void initializeMap() {
@@ -661,4 +669,19 @@ public class WeatherApp extends JFrame {
         }
     }
 
+    private void startDateUpdater() {
+        javax.swing.Timer dateTimer = new javax.swing.Timer(1000, new ActionListener() { // Update every second
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateDate();
+            }
+        });
+        dateTimer.start();
+    }
+
+    private void updateDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentDate = sdf.format(new Date());
+        dateLabel.setText("Date: " + currentDate);
+    }
 }
