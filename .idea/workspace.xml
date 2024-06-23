@@ -4,13 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="dodanie timera i daty">
+    <list default="true" id="60bebdac-4d29-4257-8f0c-f791c1f5cc9b" name="Changes" comment="przygotowanie aplikacji do zdania projektu, clean up">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/WeatherData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/WeatherData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/db/WeatherDataDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/db/WeatherDataDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherWaypointRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ui/WeatherWaypointRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/WeatherAppTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/WeatherAppTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/weather.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/weather.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/OpenWeatherMapServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/OpenWeatherMapServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/WeatherAppTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/service/WeatherDataDAOTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/service/WeatherDataDAOTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +42,7 @@
   <component name="ProjectId" id="2hxUpu2rXcFhjDO6ErVIpgBC2NJ" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
@@ -51,9 +54,11 @@
     "DefaultPlantUmlFileTemplate": "UML Class",
     "JUnit.OpenWeatherMapServiceTest.testGetCurrentWeather.executor": "Run",
     "JUnit.OpenWeatherMapServiceTest.testGetWeather.executor": "Run",
+    "JUnit.WeatherAppTest.executor": "Run",
     "JUnit.WeatherAppTest.testInitialUIComponents.executor": "Run",
+    "JUnit.WeatherDataDAOTest.executor": "Run",
     "JUnit.WeatherDataDAOTest.testClearWeatherData.executor": "Run",
-    "JUnit.WeatherDataDAOTest.testSaveAndRetrieveWeatherData.executor": "Run",
+    "JUnit.WeatherDataDAOTest.testSaveAndRetrieveWeatherData.executor": "Debug",
     "JUnit.WeatherDataDAOTest.testSaveWeatherData.executor": "Run",
     "JUnit.WeatherWaypointTest (1).executor": "Run",
     "JUnit.WeatherWaypointTest.executor": "Run",
@@ -61,18 +66,22 @@
     "JUnit.WeatherWaypointTest.testGetWeatherData (1).executor": "Run",
     "JUnit.WeatherWaypointTest.testGetWeatherData.executor": "Run",
     "JUnit.org.example.service in WeatherApp.executor": "Run",
+    "JUnit.service in WeatherApp.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/User/Desktop.jpg",
-    "project.structure.last.edited": "SDKs",
+    "last_opened_file_path": "C:/Users/User/IdeaProjects/WeatherApp/src/test/resources",
+    "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\User\IdeaProjects\WeatherApp\src\test\resources" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\User\IdeaProjects\WeatherApp\src\main\resources\images" />
       <recent name="C:\Users\User\IdeaProjects\WeatherApp\src\main\resources" />
@@ -81,7 +90,7 @@
       <recent name="org.example.ui" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.org.example.service in WeatherApp">
+  <component name="RunManager" selected="Application.WatherApp">
     <configuration name="WatherApp" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="org.example.ui.WeatherApp" />
       <module name="WeatherApp" />
@@ -90,7 +99,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="WeatherAppTest.testInitialUIComponents" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="WeatherAppTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="WeatherApp" />
       <extension name="coverage">
         <pattern>
@@ -100,28 +109,12 @@
       </extension>
       <option name="PACKAGE_NAME" value="org.example.service" />
       <option name="MAIN_CLASS_NAME" value="org.example.service.WeatherAppTest" />
-      <option name="METHOD_NAME" value="testInitialUIComponents" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="WeatherWaypointTest (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="WeatherApp" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.service.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.WeatherWaypointTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="WeatherWaypointTest.testGetWeatherData (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="WeatherDataDAOTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="WeatherApp" />
       <extension name="coverage">
         <pattern>
@@ -130,25 +123,25 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.example.service" />
-      <option name="MAIN_CLASS_NAME" value="org.example.service.WeatherWaypointTest" />
-      <option name="METHOD_NAME" value="testGetWeatherData" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.WeatherDataDAOTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="WeatherWaypointTest.testGetWeatherData" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="WeatherDataDAOTest.testSaveAndRetrieveWeatherData" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="WeatherApp" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.ui.*" />
+          <option name="PATTERN" value="org.example.service.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.example.ui" />
-      <option name="MAIN_CLASS_NAME" value="org.example.ui.WeatherWaypointTest" />
-      <option name="METHOD_NAME" value="testGetWeatherData" />
+      <option name="PACKAGE_NAME" value="org.example.service" />
+      <option name="MAIN_CLASS_NAME" value="org.example.service.WeatherDataDAOTest" />
+      <option name="METHOD_NAME" value="testSaveAndRetrieveWeatherData" />
       <option name="TEST_OBJECT" value="method" />
+      <dir value="$PROJECT_DIR$/src/test/java/org/example/service" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -167,13 +160,21 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="service in WeatherApp" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="WeatherApp" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test/java/org/example/service" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.service in WeatherApp" />
+        <item itemvalue="JUnit.WeatherAppTest" />
+        <item itemvalue="JUnit.WeatherDataDAOTest" />
+        <item itemvalue="JUnit.WeatherDataDAOTest.testSaveAndRetrieveWeatherData" />
         <item itemvalue="JUnit.org.example.service in WeatherApp" />
-        <item itemvalue="JUnit.WeatherAppTest.testInitialUIComponents" />
-        <item itemvalue="JUnit.WeatherWaypointTest.testGetWeatherData" />
-        <item itemvalue="JUnit.WeatherWaypointTest.testGetWeatherData (1)" />
-        <item itemvalue="JUnit.WeatherWaypointTest (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -321,7 +322,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719138717197</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="przygotowanie aplikacji do zdania projektu, clean up">
+      <option name="closed" value="true" />
+      <created>1719159533106</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1719159533106</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -341,7 +350,8 @@
     <MESSAGE value="poprawa wygladu interfejsu uzytkownika" />
     <MESSAGE value="testy jednostkowe" />
     <MESSAGE value="dodanie timera i daty" />
-    <option name="LAST_COMMIT_MESSAGE" value="dodanie timera i daty" />
+    <MESSAGE value="przygotowanie aplikacji do zdania projektu, clean up" />
+    <option name="LAST_COMMIT_MESSAGE" value="przygotowanie aplikacji do zdania projektu, clean up" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -350,6 +360,16 @@
           <url>jar://$USER_HOME$/.jdks/openjdk-22/lib/src.zip!/java.desktop/javax/swing/LookAndFeel.java</url>
           <line>151</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/db/WeatherDataDAO.java</url>
+          <line>64</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/db/WeatherDataDAO.java</url>
+          <line>55</line>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

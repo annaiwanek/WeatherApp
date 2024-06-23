@@ -7,12 +7,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
 public class OpenWeatherMapServiceTest {
 
     private WeatherProvider weatherProvider;
 
-    @BeforeAll
+    @BeforeEach
     public void setUp() {
         weatherProvider = new OpenWeatherMapService(true); // Metric units
     }
@@ -47,8 +47,5 @@ public class OpenWeatherMapServiceTest {
             assertTrue(data.getHumidity() >= 0 && data.getHumidity() <= 100);
             assertTrue(data.getPressure() > 800 && data.getPressure() < 1200);
         }
-
-
     }
-
 }

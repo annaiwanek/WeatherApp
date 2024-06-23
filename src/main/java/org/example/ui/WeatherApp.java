@@ -64,7 +64,7 @@ public class WeatherApp extends JFrame {
     private boolean isMetric = true;
     private String currentLocation = "";
     private JXMapViewer mapViewer;
-    private Set<WeatherWaypoint> waypoints = new HashSet<>();
+    private final Set<WeatherWaypoint> waypoints = new HashSet<>();
     private JButton getWeatherButton;
 
     private static final String GEO_API_URL = "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s";
@@ -72,6 +72,10 @@ public class WeatherApp extends JFrame {
     private WeatherData currentWeatherData;
 
     public WeatherApp() {
+        initApp();
+    }
+
+    private void initApp(){
         logger.info("Starting Weather app...");
 
         // Set FlatLaf look and feel

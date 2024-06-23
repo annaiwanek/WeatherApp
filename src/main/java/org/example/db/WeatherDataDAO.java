@@ -24,7 +24,6 @@ public class WeatherDataDAO {
                     + "timestamp TEXT NOT NULL)";
             Statement stmt = conn.createStatement();
             stmt.execute(createTableSQL);
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -33,7 +32,7 @@ public class WeatherDataDAO {
     public void saveWeatherData(WeatherData data) {
         String insertSQL = "INSERT INTO weather(location, temperature, description, icon_code, wind_speed, humidity, pressure, timestamp) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
+            PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
             pstmt.setString(1, data.getLocation());
             pstmt.setDouble(2, data.getTemperature());
             pstmt.setString(3, data.getDescription());
@@ -42,7 +41,7 @@ public class WeatherDataDAO {
             pstmt.setInt(6, (int) data.getHumidity());
             pstmt.setInt(7, (int) data.getPressure());
             pstmt.setString(8, data.getTimestamp() != null ? data.getTimestamp() : "N/A");
-            pstmt.executeUpdate();
+            pstmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -72,10 +71,11 @@ public class WeatherDataDAO {
     }
 
     public void clearWeatherData() {
-        String deleteSQL = "DELETE FROM weather";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(deleteSQL)) {
-            pstmt.executeUpdate();
+        String deleteSQL = "DELETE FROM weather;";
+        String vacuum = "VACUUM;";
+        try (Connection conn = DriverManager.getConnection(DB_URL)){
+            conn.prepareStatement(deleteSQL).execute();
+            conn.prepareStatement(vacuum).execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
